@@ -1,0 +1,1 @@
+jQuery.require("com.nysoft.nyas.ui.Canvas.CanvasObject");com.nysoft.nyas.ui.Canvas.CanvasObject.extend("com.nysoft.nyas.ui.Canvas.Path",{init:function(a){this._super("init",a)}});
