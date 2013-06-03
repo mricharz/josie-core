@@ -68,6 +68,7 @@ com.nysoft.nyas.core.BaseObject.extend('foo.bar.Foobar' {
       boolean
       function
       object
+      null (without ') > no validation
     and more. see native javascript types as reference
     */
   }
