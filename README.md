@@ -102,3 +102,8 @@ Then init the library you only have to add this to your HTML-Head:
 //Before this line you need to load jQuery-Library!
 <script type="text/javascript" src="/core.js"></script>
 ```
+
+License:
+--------
+
+Distributed under the [MIT license](http://opensource.org/licenses/MIT "MIT license")
