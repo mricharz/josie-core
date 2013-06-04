@@ -35,7 +35,7 @@ new foo.bar.Foobar();
 
 you can implement a constructor by adding a method named _init_:
 ```javascript
-com.nysoft.nyas.core.BaseObject.extend('foo.bar.Foobar' {
+com.nysoft.nyas.core.BaseObject.extend('foo.bar.Foobar', {
   init: function() {
     alert(arguments[0]); //arguments are the constructor parameters
   }
@@ -57,7 +57,7 @@ But this will throw an exception if the method not exists in super-class.
 
 You can use _meta_-Property to autogenerate getter and setter methods with type validation:
 ```javascript
-com.nysoft.nyas.core.BaseObject.extend('foo.bar.Foobar' {
+com.nysoft.nyas.core.BaseObject.extend('foo.bar.Foobar', {
   meta: {
     foo: 'number',
     bar: 'string'
