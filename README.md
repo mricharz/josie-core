@@ -92,6 +92,21 @@ this will load synchronously: /foo/bar/Foobar.js
 
 But this will only be loaded once! If this is already loaded, _jQuery.require_ will skip without an error.
 
+Utils:
+------
+
+There are coming some little methods with the core.js. Have a look at _jQuery.utils_.
+```javascript
+console.log(jQuery.utils);
+```
+
+Dependencies:
+-------------
+
+This Framework depends on [jQuery](http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js "jQuery 1.9.1")
+This should work with all jQuery-Versions from 1.4 up to 2.x.
+If there is any error/bug with some jquery version, please tell me or feel free to push a fix.
+
 Usage:
 ------
 
