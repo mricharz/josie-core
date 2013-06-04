@@ -142,7 +142,7 @@ jQuery.utils = {
 	//faster alternative for Math.floor(value)
 	floor: function(value) {
 	    return ~~value;
-	}
+	},
 	
 	/* GUID Generator */
 	S4: function() {
