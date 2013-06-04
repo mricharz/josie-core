@@ -134,9 +134,9 @@ jQuery.utils = {
 	    return (0.5 + value) & 0xffff;	
 	},
 	
-	//faster alternative for Math.ceil( Math.abs(value) )
+	//faster alternative for Math.ceil(value)
 	ceil: function(value) {
-	    return ((value >= 0 ? value : -value) + 0.5) >> 0;	
+	    return ~~value + 1;	
 	},
 	
 	//faster alternative for Math.floor(value)
