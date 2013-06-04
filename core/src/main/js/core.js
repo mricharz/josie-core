@@ -126,8 +126,23 @@ jQuery.utils = {
 	
 	//convert degrees into radian
 	deg2rad: function(angle) {
-		return angle * .017453292519943295; //(angle / 180) * Math.PI;
+	    return angle * .017453292519943295; //(angle / 180) * Math.PI;
 	},
+	
+	//faster alternative for Math.round(value)
+	round: function(value) {
+	    return (0.5 + value) & 0xffff;	
+	},
+	
+	//faster alternative for Math.ceil( Math.abs(value) )
+	ceil: function(value) {
+	    return ((value >= 0 ? value : -value) + 0.5) >> 0;	
+	},
+	
+	//faster alternative for Math.floor(value)
+	floor: function(value) {
+	    return ~~value;
+	}
 	
 	/* GUID Generator */
 	S4: function() {
