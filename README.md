@@ -22,7 +22,7 @@ Classes:
 
 To create Classes, extend the BaseObject:
 ```javascript
-com.nysoft.nyas.core.BaseObject.extend('foo.bar.Foobar' {});
+com.nysoft.nyas.core.BaseObject.extend('foo.bar.Foobar', {});
 ```
 this will create a new Class named _Foobar_ in namespace _foo.bar_
 
