@@ -92,6 +92,26 @@ this will load synchronously: /foo/bar/Foobar.js
 
 But this will only be loaded once! If this is already loaded, _jQuery.require_ will skip without an error.
 
+Logging:
+--------
+
+It is recommended to use the built-in logging mechanism instead of console.log to prevent errors in some browsers.
+
+```javascript
+jQuery.log.trace('trace foobar');
+jQuery.log.debug('debug foobar');
+jQuery.log.info('info foobar');
+jQuery.log.warning('warning foobar');
+jQuery.log.error('ERROR foobar');
+```
+
+The default LogLevel is _None_. To set the LogLevel use:
+```javascript
+jQuery.log.setLevel( jQuery.log.level.All );
+jQuery.log.setLevel( jQuery.log.level.Info );
+/* None, Error, Warning, Info, Debug, Trace, All */
+```
+
 Utils:
 ------
 
