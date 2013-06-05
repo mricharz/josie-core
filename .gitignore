@@ -29,10 +29,14 @@ local.properties
 .buildpath
 
 # Maven
-**/target/classes/
-**/target/maven-archiver/
-**/target/surefire/
-**/target/css/
+core/target/classes/
+core/target/maven-archiver/
+core/target/surefire/
+
+ui/target/classes/
+ui/target/maven-archiver/
+ui/target/surefire/
+ui/target/css/
 
 
 #################
