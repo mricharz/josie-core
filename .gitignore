@@ -28,6 +28,12 @@ local.properties
 # PDT-specific
 .buildpath
 
+# Maven
+target/classes/
+target/maven-archiver/
+target/surefire/
+target/css/
+
 
 #################
 ## Visual Studio
