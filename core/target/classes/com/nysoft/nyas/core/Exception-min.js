@@ -1,1 +1,0 @@
-jQuery.declare("com.nysoft.nyas.core.Exception");com.nysoft.nyas.core.Exception=function(a){this.message=a;this.toString=function(){var b=this.message||"unknown exception";return"Exception: "+b}};

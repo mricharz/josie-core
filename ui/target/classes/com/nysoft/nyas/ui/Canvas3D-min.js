@@ -1,1 +1,0 @@
-jQuery.require("com.nysoft.nyas.ui.Canvas");com.nysoft.nyas.ui.Canvas.extend("com.nysoft.nyas.ui.Canvas3D",{meta:{context:"object",},init:function(a){this._super("init",a);if(this.getCanvas()){this.setContext(this.getCanvas().getContext("3d"))}}});
