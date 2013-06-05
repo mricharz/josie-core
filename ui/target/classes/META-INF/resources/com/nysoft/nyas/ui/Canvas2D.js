@@ -4,22 +4,26 @@ com.nysoft.nyas.ui.Canvas.extend('com.nysoft.nyas.ui.Canvas2D', {
 	meta: {
 		context: 'object',
 		objects: 'object',
-		measureCallback: 'function'
+		measureCallback: 'function',
+		measurement: 'boolean'
 	},
 	
-	init: function(canvas) {
-		this._super('init', canvas);
+	init: function(domObject, options) {
+		this._super('init', domObject, options);
+		
 		if(this.getCanvas()) {
+			//set canvas2d-CSSClass
+			if(!this.getDom().hasClass('canvas2d'))
+				this.getDom().addClass('canvas2d');
 			//get 2d context out of canvas
-			this.setContext(this.getCanvas().getContext('2d'));
+			this.setContext(this.getCanvas().get(0).getContext('2d'));
 		}
 		
-		//performance measurement
+		//init for performance measurement
 		this.fps = 0;
 		this.now = null;
 		this.lastUpdate = (new Date)*1 - 1;
 		this.fpsFilter = 50; //highcap
-
 	},
 	
 	addObject: function(object) {
@@ -35,7 +39,7 @@ com.nysoft.nyas.ui.Canvas.extend('com.nysoft.nyas.ui.Canvas2D', {
 
 		// Use the identity matrix while clearing the canvas
 		this.getContext().setTransform(1, 0, 0, 1, 0, 0);
-		this.getContext().clearRect(0, 0, this.getCanvas().width, this.getCanvas().height);
+		this.getContext().clearRect(0, 0, this.getCanvas().get(0).width, this.getCanvas().get(0).height);
 
 		// Restore the transform
 		this.getContext().restore();
@@ -49,7 +53,7 @@ com.nysoft.nyas.ui.Canvas.extend('com.nysoft.nyas.ui.Canvas2D', {
 	
 	render: function() {
 		this.renderObjects();
-		this._measureFrame();
+		(this.getMeasurement()) && this._measureFrame();
 	},
 	
 	rerender: function() {

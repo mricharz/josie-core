@@ -30,13 +30,35 @@
 					<gzip>true</gzip>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>lesscss-maven-plugin</artifactId>
+				<version>1.0-beta-3</version>
+				<configuration>
+					<sourceDirectory>src/main/less</sourceDirectory>
+					<outputDirectory>target/css</outputDirectory>
+		        </configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+		
 		<resources>
 			<resource>
 				<directory>src/main/js</directory>
 				<targetPath>META-INF/resources/</targetPath>
 			</resource>
+			<resource>
+				<directory>target/css</directory>
+				<targetPath>META-INF/resources/css</targetPath>
+			</resource>
 		</resources>
+		
 		<pluginManagement>
 			<plugins>
 				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
@@ -72,6 +94,7 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		
 	</build>
 	
 	<dependencies>

@@ -66,13 +66,31 @@ jQuery.log = {
 		
 		_write: function(object) {
 			if(console !== undefined && console.log !== undefined) {
-				console.log('[' + this._getTimestamp() + '] ' + object);
+				console.log('[' + this._getTimestamp() + '] ', object);
+			}
+		},
+		
+		_writeInfo: function(object) {
+			if(console !== undefined && console.info !== undefined) {
+				console.info('[' + this._getTimestamp() + '] ', object);
+			} else {
+				this._write(object);
+			}
+		},
+		
+		_writeWarn: function(object) {
+			if(console !== undefined && console.warn !== undefined) {
+				console.warn('[' + this._getTimestamp() + '] ', object);
+			} else {
+				this._writeInfo(object);
 			}
 		},
 		
 		_writeError: function(object) {
 			if(console !== undefined && console.error !== undefined) {
-				console.error('[' + this._getTimestamp() + '] ' + object);
+				console.error('[' + this._getTimestamp() + '] ', object);
+			} else {
+				this._writeWarn(object);
 			}
 		},
 		
@@ -90,13 +108,13 @@ jQuery.log = {
 		
 		info: function(object) {
 			if(jQuery.log.logLevel >= 3) {
-				this._write(object);
+				this._writeInfo(object);
 			}
 		},
 		
 		warning: function(object) {
 			if(jQuery.log.logLevel >= 2) {
-				this._write(object);
+				this._writeWarn(object);
 			}
 		},
 		
@@ -152,8 +170,29 @@ jQuery.utils = {
 	    return jQuery.utils.S4() + jQuery.utils.S4() + jQuery.utils.S4() + jQuery.utils.S4();
 	},
 	
-	isjQuery: function( obj ){
+	isjQuery: function(obj){
 	  return obj && obj.hasOwnProperty && obj instanceof jQuery;
+	},
+	
+	isUrl: function(url) {
+		var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+				  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+				  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+				  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+				  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+				  '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+		if(!pattern.test(url)) {
+			return false;
+		}
+		return true;
+	},
+	
+	isNamespace: function(namespace) {
+		var pattern = new RegExp('^([a-zA-Z0-9_-]*\\.?)*$', 'i');
+		if(!pattern.test(namespace)) {
+			return false;
+		}
+		return true;
 	}
 	
 };
@@ -163,7 +202,7 @@ jQuery.declare = function(namespace, base) {
     if(base === undefined || base === null) {
         base = window;
     }
-    if(namespace) {
+    if(namespace && jQuery.utils.isNamespace(namespace)) {
 	    var scopes = namespace.split('.');
 	    firstScope = scopes.shift();
 	    if(base[firstScope] === undefined) {
@@ -179,20 +218,33 @@ jQuery.declare = function(namespace, base) {
 
 //Lazyloading
 jQuery.require = function(className, options) {
-	if(!window[className]) {
-		var path = className.replace(/\./g, '/')+'.js';
-		options = jQuery.extend({
-			async: false,
-			url: path,
-			dataType: "script",
-			cache: true
-		}, options);
-		jQuery.ajax(options).done(function(script, textStatus) {
-			jQuery.log.trace('Loaded: '+path+' - '+textStatus);
-		}).fail(function(jqxhr, settings, exception) {
-			jQuery.log.error('Could not load: '+path+' - '+jqxhr.status+' '+exception);
-		});
+	if(jQuery.utils.isNamespace(className)) {
+		//check if class already exists
+		if(window[className]) return;
+		//convert className into path
+		className = className.replace(/\./g, '/')+'.js';
+	} else if(!jQuery.utils.isUrl(className)) {
+		jQuery.log.error('Not a valid className or url: '+className);
+		return;
 	}
+	options = jQuery.extend({
+		async: false,
+		dataType: "script",
+		cache: true,
+		url: className
+	}, options);
+	
+	if(jQuery._resources === undefined) {
+		jQuery._resources = [];
+	}
+	//check if resource is already loaded
+	for(p=0;p<jQuery._resources.length;p++) if (className === jQuery._resources[p]) return;
+	//load it
+	jQuery.ajax(options).done(function(script, textStatus) {
+		jQuery.log.trace('Loaded: '+options.url+' - '+textStatus);
+	}).fail(function(jqxhr, settings, exception) {
+		jQuery.log.error('Could not load: '+options.url+' - '+jqxhr.status+' '+exception);
+	});
 };
 
 //Class Pattern
