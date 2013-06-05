@@ -239,6 +239,7 @@ jQuery.require = function(className, options) {
 	}
 	//check if resource is already loaded
 	for(p=0;p<jQuery._resources.length;p++) if (className === jQuery._resources[p]) return;
+	jQuery._resources.push(className);
 	//load it
 	jQuery.ajax(options).done(function(script, textStatus) {
 		jQuery.log.trace('Loaded: '+options.url+' - '+textStatus);
