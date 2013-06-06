@@ -1,23 +1,35 @@
-jQuery.require('com.nysoft.nyas.core.BaseObject');
+jQuery.require('com.nysoft.nyas.core.Control');
 
-com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.ui.Tile', {
+com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Tile', {
 	meta: {
-		tile: 'object',
 		tilescontainer: 'object',
 		title: 'string',
 		opened: 'boolean',
-		playground: 'object',
 		onOpen: 'function',
 		onClose: 'function'
 	},
 	
-	init: function(object, options) {
-		jQuery.log.trace('Tile constructor');
-		if(object) {
-			this.setTilescontainer(object.parents('.tilescontainer'));
-			this.setTile(object);
+	init: function(domObject, options) {
+		this._super('init', domObject, options);
+		
+		//get tileContainer
+		if(this.getDom()) {
+			this.setTilescontainer(this.getDom().parents('.tile-container'));
+		}
+		
+		//update properties to force draw in dom
+		this.setTitle(this.getTitle());
+	},
+	
+	_renderControl: function() {
+		if(this.getDom()) {
+			this.getDom().addClass('tile');
+			this.getDom.html(
+				'<h3></h3>'
+			);
+			this.title = this.getDom().children('h3');
 			
-			this.getTile().click(jQuery.proxy(function() {
+			this.getDom().click(jQuery.proxy(function() {
 				if(!this.getOpened()) {
 					this.open();
 				} else {
@@ -25,40 +37,29 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.ui.Tile', {
 				}
 			}, this));
 		}
-		this.setProperties(options);
+	},
+	
+	setTitle: function(title) {
+		if(typeof object == 'string') {
+			this.setProperty('title', title);
+			if(this.title) {
+				this.title.text(title);	
+			}
+		}
 	},
 	
 	open: function() {
 		this.getTilescontainer().hide();
-		jQuery('body').append(this.getPlayground());
-		this.getPlayground().generateObject();
 		this.setOpened(true);
 		if(jQuery.isFunction(this.getOnOpen()))
 			this.getOnOpen().call(this, this);
 	},
 	
 	close: function() {
-		this.getPlayground().detach();
 		this.getTilescontainer().show();
 		this.setOpened(false);
 		if(jQuery.isFunction(this.getOnClose()))
 			this.getOnClose().call(this, this);
 	},
 	
-	draw: function(parent) {
-		this.setTile(jQuery(
-				'<div class="tile">' +
-				'<h2>' + this.getTitle() + '</h2>' +
-				'</div>'
-		));
-		parent.append(this.getTile());
-		
-		this.getTile().click(jQuery.proxy(function() {
-			if(!this.getOpened()) {
-				this.open();
-			} else {
-				this.close();
-			}
-		}, this));
-	}
 });

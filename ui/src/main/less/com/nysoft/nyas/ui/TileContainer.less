@@ -1,0 +1,39 @@
+.tile-container {
+	
+	width: inherit;
+	height: inherit;
+	
+	.container {
+	
+		position: relative;
+		height: inherit;
+		overflow: hidden;
+		
+		.inner {
+			height: inherit;
+		}
+		
+		.arrow {
+			
+			position: absolute;
+			top: 50%;
+			margin-top: -10px;
+			width: 0; 
+			height: 0;
+			 
+			&.right {
+				right: 15px;
+				border-top: 20px solid transparent;
+				border-bottom: 20px solid transparent;
+				border-left: 20px solid #888;
+			}
+			
+			&.left {
+				left: 15px;
+				border-top: 20px solid transparent;
+				border-bottom: 20px solid transparent;
+				border-right: 20px solid #888;
+			}
+		}
+	}
+}

@@ -21,7 +21,6 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Shell', {
 		window.addEventListener("orientationchange", jQuery.proxy(this._updateSize, this));
 		window.addEventListener("resize", jQuery.proxy(this._updateSize, this));
 		
-		
 		this.setUser(new com.nysoft.nyas.user.User({
 			name: jQuery.utils.getParameter('name') || 'unnamed user'
 		}));
