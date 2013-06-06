@@ -115,10 +115,7 @@ jQuery.log.setLevel( jQuery.log.level.Info );
 Utils:
 ------
 
-There are coming some little methods with the core.js. Have a look at _jQuery.utils_.
-```javascript
-console.log(jQuery.utils);
-```
+There are coming some little methods with the core.js. Have a look at [jQuery.utils](https://github.com/mricharz/Simple-JavaScript-Framework/blob/master/core/src/main/js/core.js#L95 "jQuery.utils in core.js").
 
 Dependencies:
 -------------
