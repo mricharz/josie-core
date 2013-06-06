@@ -1,38 +1,34 @@
 jQuery.require('com.nysoft.nyas.core.BaseObject');
 jQuery.require('css/com/nysoft/nyas/ui.css', {dataType: 'stylesheet'});
 
-com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.ui.Canvas', {
+com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Canvas', {
 	meta: {
-		id: 'string',
-		dom: 'object',
 		canvas: 'object',
 		background: 'object'
 	},
 	
 	init: function(domObject, options) {
-		if(domObject) {
-			this.setDom(domObject);
-		} else {
-			this.setDom(jQuery('<div />'));
-		}
-		this.setProperties(options);
-		(!this.getId()) && this.setId(jQuery.utils.uniqueId());
-		
-		this._renderCanvasControl();
+		this._super('init', domObject, options);
 
 		//update size of canvas
-		window.addEventListener("orientationchange", jQuery.proxy(this._updateCanvasSize, this));
+		this._updateSize();
+		window.addEventListener("orientationchange", jQuery.proxy(this._updateSize, this));
+		window.addEventListener("resize", jQuery.proxy(this._updateSize, this));
 	},
 	
-	_updateCanvasSize: function() {
-		var parent = this.getDom().parent() || jQuery('body');
+	_updateSize: function() {
+		var parent = this.getDom().parent();
+		if(parent && parent.get(0) && parent.get(0).nodeName.toLowerCase() == 'body') {
+			parent = jQuery(window);
+		}
+		jQuery.log.trace('Canvas::_updateSize', parent, parent.innerHeight(), parent.innerWidth());
 		this.getDom().css('height', parent.innerHeight());
 		this.getDom().css('width', parent.innerWidth());
 		this.getCanvas().get(0).height = parent.innerHeight();
 		this.getCanvas().get(0).width = parent.innerWidth();
 	},
 	
-	_renderCanvasControl: function() {
+	_renderControl: function() {
 		//setting id to domObject
 		this.getDom().attr('id', this.getId());
 		//add canvas-CSSClass

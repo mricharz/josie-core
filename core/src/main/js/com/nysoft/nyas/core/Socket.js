@@ -15,9 +15,7 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Socket', {
 	init: function(options) {
 		this.setProperties(options);
 		
-		if(this.getUrl()) {
-			this.open();
-		}
+		this.open();
 	},
 	
 	open: function() {
@@ -30,10 +28,10 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Socket', {
 				this.getSocket().onmessage = jQuery.proxy(this.onMessage, this);
 				this.getSocket().onclose = jQuery.proxy(this.onClose, this);
 			} else {
-				throw new Exception('Socket already opened or in connecting-progress!');
+				throw new com.nysoft.nyas.core.Exception('Socket already opened or in connecting-progress!');
 			}
 		} else {
-			throw new Exception('URL for SocketConnection is not defined!');
+			throw new com.nysoft.nyas.core.Exception('URL for SocketConnection is not defined!');
 		}
 	},
 	
@@ -43,17 +41,21 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Socket', {
 	},
 	
 	send: function(data) {
-		this.getSocket().send(data);
+		if(this.getStatus() == com.nysoft.nyas.core.Socket.Status.Opened) {
+			this.getSocket().send(data);
+		} else {
+			throw new com.nysoft.nyas.core.Exception('Socket is not ready, yet!');
+		}
 	},
 	
 	onMessage: function(e) {
-		console.log(e.data);
+		jQuery.log.trace(e.data);
 		if(jQuery.isFunction(this.getOnMessage()))
 			this.getOnMessage().call(this, e);
 	},
 	
 	onError: function(e) {
-		console.log(e);
+		jQuery.log.trace(e);
 		if(jQuery.isFunction(this.getOnError()))
 			this.getOnError().call(this, e);
 	},
@@ -66,7 +68,6 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Socket', {
 	
 	onClose: function(e) {
 		this.setProperty('status', com.nysoft.nyas.core.Socket.Status.Closed);
-		this.send('bye:'+this.getUser().getName());
 		if(jQuery.isFunction(this.getOnClose()))
 			this.getOnClose().call(this, e);
 	}

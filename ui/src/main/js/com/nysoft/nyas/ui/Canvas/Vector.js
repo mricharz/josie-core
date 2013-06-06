@@ -47,7 +47,7 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.ui.Canvas.Vector', {
 		//get angle
 		var a = divV.angle();
 		//change angle
-		a += jQuery.deg2rad(deg);
+		a += jQuery.utils.deg2rad(deg);
 		//polar to cartesian
 		newVect = new com.nysoft.nyas.ui.Canvas.Vector(
 			m * Math.cos(a),

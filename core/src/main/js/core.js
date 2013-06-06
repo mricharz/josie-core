@@ -1,126 +1,78 @@
-/*
- * Extending jQuery CSS-Selector
- */
-jQuery.extend(jQuery.expr[':'],{
-        //Extend the CSS-Selector to select Elements are displayed
-        display: function(a,i,m) {
-            if ((m[3] != null) && (m[3] !== undefined) && (m[3] != "")) { //Check the Content of CSS-Display State
-        	    if (jQuery(a).css("display") === m[3]) {
-                    return true;
-                }
-            } else { //Check if Content is Displayed
-                if (jQuery(a).css("display") != "none") {
-                    return true;
-                }
-            }
-            return false;
-        },
-        //Extend the CSS-Selector to select Elements containing "jsclass" with or without Value
-        jsclass: function(a,i,m) {
-            if(a){
-                if ((m[3] != null) && (m[3] !== undefined) && (m[3] != "")) { //Check the Content of "jsclass"-Attribute
-                    if (jQuery(a).data("jsclass") === m[3]) {
-                        return true;
-                    }
-                } else { //Check if Attribute exsist
-                    if (jQuery(a).data("jsclass")) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        },
-        //Extend the CSS-Selector to select Elements containing "jsoptions" with or without Value
-        jsoptions: function(a,i,m) {
-            if ((m[3] != null) && (m[3] !== undefined) && (m[3] != "")) { //Check the Content of "jsoptions"-Attribute
-        	    if (jQuery(a).data("jsoptions") === m[3]) {
-                    return true;
-                }
-            } else { //Check if Attribute exsist
-                if (jQuery(a).data("jsoptions")) {
-                    return true;
-                }
-            }
-            return false;
-        },
-        //Extend the CSS-Selector to select Elements containing "rel" with or without Value
-        rel: function(a,i,m) {
-            if ((m[3] != null) && (m[3] !== undefined) && (m[3] != "")) { //Check the Content of "rel"-Attribute
-        	    if (jQuery(a).attr("rel") === m[3]) {
-                    return true;
-                }
-            } else { //Check if Attribute exsist
-                if (jQuery(a).attr("rel")) {
-                    return true;
-                }
-            }
-            return false;
-        }
-});
-
 //Logging
 jQuery.log = {
 		_getTimestamp: function() {
 			return new Date().toISOString();	
 		},
 		
-		_write: function(object) {
+		_write: function() {
 			if(console !== undefined && console.log !== undefined) {
-				console.log('[' + this._getTimestamp() + '] ', object);
+				var data = [];
+				data.push('[' + this._getTimestamp() + '] ');
+				data.push(arguments);
+				console.log.apply(console, data);
 			}
 		},
 		
-		_writeInfo: function(object) {
+		_writeInfo: function() {
 			if(console !== undefined && console.info !== undefined) {
-				console.info('[' + this._getTimestamp() + '] ', object);
+				var data = [];
+				data.push('[' + this._getTimestamp() + '] ');
+				data.push(arguments);
+				console.info.apply(console, data);
 			} else {
-				this._write(object);
+				this._write.apply(this, arguments);
 			}
 		},
 		
-		_writeWarn: function(object) {
+		_writeWarn: function() {
 			if(console !== undefined && console.warn !== undefined) {
-				console.warn('[' + this._getTimestamp() + '] ', object);
+				var data = [];
+				data.push('[' + this._getTimestamp() + '] ');
+				data.push(arguments);
+				console.warn.apply(console, data);
 			} else {
-				this._writeInfo(object);
+				this._writeInfo.apply(this, arguments);
 			}
 		},
 		
-		_writeError: function(object) {
+		_writeError: function() {
 			if(console !== undefined && console.error !== undefined) {
-				console.error('[' + this._getTimestamp() + '] ', object);
+				var data = [];
+				data.push('[' + this._getTimestamp() + '] ');
+				data.push(arguments);
+				console.error.apply(console, data);
 			} else {
-				this._writeWarn(object);
+				this._writeWarn.apply(this, arguments);
 			}
 		},
 		
-		trace: function(object) {
+		trace: function() {
 			if(jQuery.log.logLevel >= 5) {
-				this._write(object);
+				this._write.apply(this, arguments);
 			}
 		},
 		
-		debug: function(object) {
+		debug: function() {
 			if(jQuery.log.logLevel >= 4) {
-				this._write(object);
+				this._write.apply(this, arguments);
 			}
 		},
 		
-		info: function(object) {
+		info: function() {
 			if(jQuery.log.logLevel >= 3) {
-				this._writeInfo(object);
+				this._writeInfo.apply(this, arguments);
 			}
 		},
 		
-		warning: function(object) {
+		warning: function() {
 			if(jQuery.log.logLevel >= 2) {
-				this._writeWarn(object);
+				this._writeWarn.apply(this, arguments);
 			}
 		},
 		
-		error: function(object) {
+		error: function() {
 			if(jQuery.log.logLevel >= 1) {
-				this._writeError(object);
+				this._writeError.apply(this, arguments);
 			}
 		},
 		
@@ -193,8 +145,20 @@ jQuery.utils = {
 			return false;
 		}
 		return true;
-	}
+	},
 	
+	getParameter: function(name) {
+	    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
+	},
+	
+};
+
+jQuery.loadCSS = function(url) {
+	 if (document.createStyleSheet){
+         document.createStyleSheet(url);
+     } else {
+         jQuery("head").append(jQuery("<link rel='stylesheet' href='"+url+"' type='text/css' media='screen' />"));
+     }
 };
 
 //Namespace generation
@@ -217,15 +181,13 @@ jQuery.declare = function(namespace, base) {
 };
 
 //Lazyloading
+//TODO: Refactor this!
 jQuery.require = function(className, options) {
 	if(jQuery.utils.isNamespace(className)) {
 		//check if class already exists
 		if(window[className]) return;
 		//convert className into path
 		className = className.replace(/\./g, '/')+'.js';
-	} else if(!jQuery.utils.isUrl(className)) {
-		jQuery.log.error('Not a valid className or url: '+className);
-		return;
 	}
 	options = jQuery.extend({
 		async: false,
@@ -234,6 +196,7 @@ jQuery.require = function(className, options) {
 		url: className
 	}, options);
 	
+	
 	if(jQuery._resources === undefined) {
 		jQuery._resources = [];
 	}
@@ -241,15 +204,20 @@ jQuery.require = function(className, options) {
 	for(p=0;p<jQuery._resources.length;p++) if (className === jQuery._resources[p]) return;
 	jQuery._resources.push(className);
 	//load it
-	jQuery.ajax(options).done(function(script, textStatus) {
-		jQuery.log.trace('Loaded: '+options.url+' - '+textStatus);
-	}).fail(function(jqxhr, settings, exception) {
-		jQuery.log.error('Could not load: '+options.url+' - '+jqxhr.status+' '+exception);
-	});
+	if(options.dataType == 'stylesheet') {
+		jQuery.loadCSS(options.url);
+	} else {
+		jQuery.ajax(options).done(function(script, textStatus) {
+			jQuery.log.trace('Loaded: '+options.url+' - '+textStatus);
+		}).fail(function(jqxhr, settings, exception) {
+			jQuery.log.error('Could not load: '+options.url+' - '+jqxhr.status+' '+exception);
+		});
+	}
 };
 
 //Class Pattern
 //Object can given as Return-Value or as Parameter
+//TODO: Refactor this! And use data-[optionName] instead of one attr for all jsoptions=""
 jQuery.fn.generateObject = function (domObject) {
     var objects = [];
     domObject = (jQuery(this).length) ? jQuery(this) : jQuery(domObject);
@@ -311,5 +279,5 @@ window.addEventListener("orientationchange", function() {
 
 jQuery(document).ready(function() {
 	// Autodetect Class Pattern
-	jQuery("body :jsclass").generateObject();
+	jQuery("body>[data-jsclass]").generateObject();
 });

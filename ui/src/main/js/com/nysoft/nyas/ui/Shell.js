@@ -1,120 +1,178 @@
-jQuery.require('com.nysoft.nyas.core.BaseObject');
-jQuery.require('com.nysoft.nyas.core.Socket');
+jQuery.require('com.nysoft.nyas.core.Control');
+jQuery.require('com.nysoft.nyas.networking.VirtualProtocolSocket');
+jQuery.require('com.nysoft.nyas.ui.Button');
+jQuery.require('com.nysoft.nyas.user.User');
+jQuery.require('css/com/nysoft/nyas/ui.css', {dataType: 'stylesheet'});
 
-com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.ui.Shell', {
+com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Shell', {
 	meta: {
-		object: 'object',
 		user: 'object',
 		socketConnection: 'object',
-		tiles: 'object',
-		currentTileIndex: 'number'
+		content: 'string',
+		leftContent: 'string',
+		rightContent: 'string'
 	},
 	
-	addTile: function(tile) {
-		if(!this.getTiles()) {
-			this.setTiles([]);
-		}
-		return this.getTiles().push(tile)-1;
-	},
-	
-	getURLParameter: function(name) {
-	    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
-	},
-	
-	init: function(obj, options) {
-		this.setUser(new com.nysoft.nyas.core.User({
-			name: this.getURLParameter('name')
+	init: function(domObject, options) {
+		this._super('init', domObject, options);
+		
+		//update size of canvas
+		this._updateSize();
+		window.addEventListener("orientationchange", jQuery.proxy(this._updateSize, this));
+		window.addEventListener("resize", jQuery.proxy(this._updateSize, this));
+		
+		
+		this.setUser(new com.nysoft.nyas.user.User({
+			name: jQuery.utils.getParameter('name') || 'unnamed user'
 		}));
 		
-		this.setObject(obj);
-		this.setProperties(options);
+		this.sidebarWidth = 300;
+		if(jQuery.device.mobile) {
+			this.sidebarWidth = 100;
+		}
 		
 		this.openSocket();
-		this.drawShell();
 		
-		if(options.createTiles) {
-			jQuery.each(options.createTiles, jQuery.proxy(function(key, value) {
-				if(window[value]) {
-					var tile = new window[value](null, {
-						tilescontainer: this.tilescontainer,
-						onOpen: jQuery.proxy(function(tile) {
-							var index = null;
-							jQuery.each(this.getTiles(), jQuery.proxy(function(key, value) {
-								if(tile == value) {
-									index = key;
-									return false;
-								}
-							}, this));
-							this.setCurrentTileIndex(index);
-						}, this),
-						onClose: jQuery.proxy(function(tile) {
-							this.setCurrentTileIndex(null);
-						}, this)
-					});
-					tile.draw(this.tilescontainer);
-					this.addTile(tile);
-				}
-			}, this));
-		}
+		//update content to force writing in dom
+		this.setContent(this.getContent());
+		this.setLeftContent(this.getLeftContent());
+		this.setRightContent(this.getRightContent());
 	},
 	
-	addChatBoxBtn: function(users) {
-		if(!users)
-			return;
-		users = users.split(',');
-		jQuery.each(users, jQuery.proxy(function(key, value) {
-			if(value && value != this.getUser().getName()) {
-				var chatBoxBtn = jQuery('<li class="chatbox-btn">'+value+'</li>');
-				this.chats.append(chatBoxBtn);
-			}
-		}, this));
-	},
-	
-	remChatBoxBtn: function(users) {
-		if(!users)
-			return;
-		users = users.split(',');
-		jQuery.each(users, jQuery.proxy(function(key, value) {
-			this.chats.find('.chatbox-btn').each(function() {
-				if(jQuery(this).text() == value)
-					this.remove();
-			})
-		}, this));
-	},
-	
-	drawShell: function() {
-		if(this.getObject()) {
-			var obj = this.getObject().html(
-					'<div class="shell-bar">' +
-						'<a class="button home"><span>Home</span></a>' +
-						'<ul class="chats"></ul>' +
-					'</div>' +
-					'<div class="tilescontainer">' + 
-						'<h2>Willkommen im NySoft Testcenter</h2>' +
-					'</div>'
+	_renderControl: function() {
+		if(this.getDom()) {
+			this.getDom().addClass('shell');
+			this.mainbar = jQuery(
+				'<div class="bar">' +
+					'<div class="left-container" />' +
+					'<div class="right-container" />' +
+				'</div>'
 			);
-			this.bar = obj.children('.shell-bar');
-			this.homeButton = this.bar.children('.button.home');
-			this.chats = this.bar.children('.chats');
-			this.tilescontainer = obj.children('.tilescontainer');
+			this.leftBtnContainer = this.mainbar.children('.left-container');
+			this.rightBtnContainer = this.mainbar.children('.right-container');
 			
-			//event
-			this.homeButton.click(jQuery.proxy(function() {
-				var tile = this.getCurrentTile();
-				if(tile)
-					tile.close();
-			}, this));
+			//add default buttons
+			this.addLeftButton(new com.nysoft.nyas.ui.Button(null, {
+				icon: 'img/icon/Settings.png',
+				click: jQuery.proxy(function() {
+					this.triggerLeftSidebar();
+				}, this)
+			}));
+			this.addLeftButton(new com.nysoft.nyas.ui.Button(null, {
+				icon: 'img/icon/Home.png',
+				click: jQuery.proxy(function() {
+					this.goHome();
+				}, this)
+			}));
+			this.addRightButton(new com.nysoft.nyas.ui.Button(null, {
+				icon: 'img/icon/Chat.png',
+				click: jQuery.proxy(function() {
+					this.triggerRightSidebar();
+				}, this)
+			}));
+			
+			
+			this.leftSidebar = jQuery('<div class="sidebar left" />');
+			this.rightSidebar = jQuery('<div class="sidebar right" />');
+			this.contentContainer = jQuery('<div class="content" />');
+			this.getDom().append(this.mainbar);
+			this.getDom().append(this.leftSidebar);
+			this.getDom().append(this.contentContainer);
+			this.getDom().append(this.rightSidebar);
 		}
 	},
 	
-	getCurrentTile: function() {
-		if(this.getCurrentTileIndex() !== null) {
-			return this.getTiles()[this.getCurrentTileIndex()];
-		}
-		return null;
+	addLeftButton: function(button) {
+		button.attachTo(this.leftBtnContainer);
 	},
 	
-	socketReady: function() {
+	addRightButton: function(button) {
+		button.attachTo(this.rightBtnContainer);
+	},
+	
+	setContent: function(object) {
+		if(typeof object == 'string') {
+			this.setProperty('content', object);
+			if(this.contentContainer) {
+				this.contentContainer.html(object).children('[data-jsclass]').generateObject();	
+			}
+		}
+	},
+	
+	setLeftContent: function(object) {
+		if(typeof object == 'string') {
+			this.setProperty('leftContent', object);
+			if(this.leftSidebar) {
+				this.leftSidebar.html(object).children('[data-jsclass]').generateObject();	
+			}
+		}
+	},
+	
+	setRightContent: function(object) {
+		if(typeof object == 'string') {
+			this.setProperty('rightContent', object);
+			if(this.rightSidebar) {
+				this.rightSidebar.html(object).children('[data-jsclass]').generateObject();	
+			}
+		}
+	},
+	
+	openLeftSidebar: function() {
+		this.leftSidebar.stop(true, true).animate({'width': this.sidebarWidth-1}, {duration: 500, queue: false});
+		var contentWidth = this.contentContainer.outerWidth();
+		this.contentContainer.animate({'width': contentWidth-this.sidebarWidth}, {duration: 500, queue: false});
+	},
+	
+	closeLeftSidebar: function() {
+		var contentWidth = this.contentContainer.outerWidth();
+		this.contentContainer.animate({'width': contentWidth+this.sidebarWidth}, {duration: 500, queue: false});
+		this.leftSidebar.stop(true, true).animate({'width': '0px'}, {duration: 500, queue: false});
+	},
+	
+	triggerLeftSidebar: function() {
+		if(this.leftSidebar.stop(true, true).css('width') == '0px') {
+			this.openLeftSidebar();
+		} else {
+			this.closeLeftSidebar();
+		}
+	},
+	
+	openRightSidebar: function() {
+		var contentWidth = this.contentContainer.outerWidth();
+		this.contentContainer.animate({'width': contentWidth-this.sidebarWidth}, {duration: 500, queue: false});
+		this.rightSidebar.stop(true, true).animate({'width': this.sidebarWidth-1}, {duration: 500, queue: false});
+	},
+	
+	closeRightSidebar: function() {
+		this.rightSidebar.stop(true, true).animate({'width': '0px'}, {duration: 500, queue: false});
+		var contentWidth = this.contentContainer.outerWidth();
+		this.contentContainer.animate({'width': contentWidth+this.sidebarWidth}, {duration: 500, queue: false});
+	},
+	
+	triggerRightSidebar: function() {
+		if(this.rightSidebar.stop(true, true).css('width') == '0px') {
+			this.openRightSidebar();
+		} else {
+			this.closeRightSidebar();
+		}
+	},
+	
+	_updateSize: function() {
+		var parent = this.getDom().parent();
+		if(parent && parent.get(0) && parent.get(0).nodeName.toLowerCase() == 'body') {
+			parent = jQuery(window);
+		}
+		var innerHeight = parent.innerHeight(), innerWidth = parent.innerWidth();
+		this.getDom().css('width', innerWidth);
+		this.getDom().css('height', innerHeight);
+		this.contentContainer.css('width', innerWidth-1);
+		var sidebarHeight = innerHeight-this.mainbar.outerHeight();
+		this.contentContainer.css('height', sidebarHeight);
+		this.leftSidebar.css('height', sidebarHeight);
+		this.rightSidebar.css('height', sidebarHeight);
+	},
+
+	isSocketReady: function() {
 		if(this.getSocketConnection().getStatus() != com.nysoft.nyas.core.Socket.Status.Opened) {
 			this.openSocket();
 		}
@@ -126,11 +184,10 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.ui.Shell', {
 	
 	openSocket: function() {
 		if(!this.getSocketConnection()) {
-			this.setSocketConnection(new com.nysoft.nyas.core.Socket({
+			this.setSocketConnection(new com.nysoft.nyas.networking.VirtualProtocolSocket({
 				url: 'ws://dev.nysoft.de:88',
 				onOpen: jQuery.proxy(this.onSocketOpen, this),
-				onError: jQuery.proxy(this.onSocketError, this),
-				onMessage: jQuery.proxy(this.onSocketMessage, this)
+				onError: jQuery.proxy(this.onSocketError, this)
 			}));
 		}
 		if(this.getSocketConnection().getStatus() != com.nysoft.nyas.core.Socket.Status.Connecting && 
@@ -141,99 +198,10 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.ui.Shell', {
 	},
 	
 	onSocketOpen: function(e) {
-		this.getSocketConnection().send('hello:'+this.getUser().getName());
+		
 	},
 	
 	onSocketError: function(e) {
 		alert(JSON.stringify(e));
-	},
-	
-	onSocketMessage: function(e) {
-		console.log(e);
-		var dataSplit = e.data.match(/^([^:]*):(.*)/);
-		if(dataSplit.length > 0) {
-			var msg = dataSplit[2] || null;
-			this[dataSplit[1]].call(this, e, msg);
-		}
-	},
-	
-	userleft: function(e, data) {
-		this.remChatBoxBtn(data);
-	},
-	
-	newuser: function(e, data) {
-		this.addChatBoxBtn(data);
-	},
-	
-	userlist: function(e, data) {
-		this.addChatBoxBtn(data);
-	}
-});
-
-com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.User', {
-	meta: {
-		name: 'string'
-	},
-
-	init: function(options) {
-		this.setProperties(options);
-	}
-});
-
-jQuery.require('com.nysoft.nyas.ui.Tile');
-
-com.nysoft.nyas.ui.Tile.extend('Canvas3DTextTestTile', {
-	init: function(object, options) {
-		this.setTitle('Canvas 3D Text Test');
-		this.setPlayground(jQuery('<canvas class="playarea" id="magicball-canvas" data-jsclass="com.nysoft.Canvas3DTextTest">'));
-		this._super('init', object, options);
-	}
-});
-
-com.nysoft.nyas.ui.Tile.extend('CanvasTextTestTile', {
-	init: function(object, options) {
-		this.setTitle('Canvas Text Test');
-		this.setPlayground(jQuery('<canvas class="playarea" id="memory-canvas" data-jsclass="com.nysoft.CanvasTextTest">'));
-		this._super('init', object, options);
-	}
-});
-
-com.nysoft.nyas.ui.Tile.extend('CanvasBasicObjectsTestTile', {
-	init: function(object, options) {
-		this.setTitle('Canvas Basic Objects Test');
-		this.setPlayground(jQuery('<canvas class="playarea" id="memory-canvas" data-jsclass="com.nysoft.CanvasBasicObjectsTest">'));
-		this._super('init', object, options);
-	}
-});
-
-com.nysoft.nyas.ui.Tile.extend('AccelerationRotationTestTile', {
-	init: function(object, options) {
-		this.setTitle('Acceleration & Rotation Test');
-		this.setPlayground(jQuery('<canvas class="playarea" id="memory-canvas" data-jsclass="com.nysoft.AccelerationRotationTest">'));
-		this._super('init', object, options);
-	}
-});
-
-com.nysoft.nyas.ui.Tile.extend('PuzzleTile', {
-	init: function(object, options) {
-		jQuery.log.debug('PuzzleTile constructor');
-		this.setPlayground(jQuery('<div class="playarea" id="puzzle-div" data-jsclass="Puzzle">'));
-		this._super('init', object, options);
-	}
-});
-
-com.nysoft.nyas.ui.Tile.extend('LabyrinthTile', {
-	init: function(object, options) {
-		jQuery.log.debug('LabyrinthTile constructor');
-		this.setPlayground(jQuery('<canvas class="playarea" id="labyrinth-canvas" data-jsclass="Labyrinth">'));
-		this._super('init', object, options);
-	}
-});
-
-com.nysoft.nyas.ui.Tile.extend('StatisticTile', {
-	init: function(object, options) {
-		jQuery.log.debug('StatisticTile constructor');
-		this.setPlayground(jQuery('<div class="playarea" id="statistic-canvas" data-jsclass="Statistic">'));
-		this._super('init', object, options);
 	}
 });

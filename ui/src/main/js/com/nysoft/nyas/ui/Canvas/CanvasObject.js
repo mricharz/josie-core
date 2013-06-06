@@ -12,7 +12,7 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.ui.Canvas.CanvasObject',
 	init: function(options) {
 		this.setProperties(options);
 		//settings defaults
-		(!this.getId()) && this.setId(this.className+'-'+jQuery.uniqueId());
+		(!this.getId()) && this.setId(this.className+'-'+jQuery.utils.uniqueId());
 		(!this.getVector()) && this.setVector(new com.nysoft.nyas.ui.Canvas.Vector(0, 0));
 		(!this.getRotation()) && this.setRotation(0);
 	},
@@ -37,7 +37,7 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.ui.Canvas.CanvasObject',
 			ty = this.getVector().getY()+parseInt(height, 10)/2;
 		}
 		canvas.getContext().translate(tx, ty);
-		canvas.getContext().rotate(jQuery.deg2rad(this.getRotation()));
+		canvas.getContext().rotate(jQuery.utils.deg2rad(this.getRotation()));
 		canvas.getContext().translate(-tx, -ty);
 	},
 	

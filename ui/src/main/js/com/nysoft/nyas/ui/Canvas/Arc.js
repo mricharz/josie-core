@@ -18,7 +18,7 @@ com.nysoft.nyas.ui.Canvas.Circle.extend('com.nysoft.nyas.ui.Canvas.Arc', {
 		canvas.getContext().save();
 		canvas.getContext().beginPath();
 		this.applyRotation(canvas, this.getWidth(), this.getWidth());
-		canvas.getContext().arc(this.getVector().getX(), this.getVector().getY(), parseInt(this.getWidth(), 10), jQuery.deg2rad(this.getBeginDegrees()), jQuery.deg2rad(this.getEndDegrees()), false);
+		canvas.getContext().arc(this.getVector().getX(), this.getVector().getY(), parseInt(this.getWidth(), 10), jQuery.utils.deg2rad(this.getBeginDegrees()), jQuery.utils.deg2rad(this.getEndDegrees()), false);
 		
 		this.applyStrokeSettings(canvas);
 		if(this.isStroked()) {
