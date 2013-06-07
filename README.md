@@ -49,7 +49,7 @@ This will show a messagebox with text _hello_.
 
 You can call super-class methods by using _\_super()_:
 ```javascript
-this._super('init', arguments);
+this._super('init', argument1, argument2, ...);
 ```
 But this will throw an exception if the method not exists in super-class.
 
@@ -90,6 +90,11 @@ jQuery.require('foo.bar.Foobar');
 ```
 this will load synchronously: /foo/bar/Foobar.js
 
+You also can load external Scripts using _jQuery.require_
+```javascript
+jQuery.require('http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js');
+```
+
 But this will only be loaded once! If this is already loaded, _jQuery.require_ will skip without an error.
 
 Logging:
@@ -127,10 +132,10 @@ If there is any error/bug with some jquery version, please tell me or feel free 
 Usage:
 ------
 
-To get this framework to your project you can download the jar-Files of [core](https://github.com/mricharz/Simple-JavaScript-Framework/blob/master/core/target/core-0.0.1-SNAPSHOT.jar "Core-Library") and [ui](https://github.com/mricharz/Simple-JavaScript-Framework/blob/master/ui/target/ui-0.0.1-SNAPSHOT.jar "UI-Library") and load it inside of your project.
+To get this framework into your project you can download the jar-Files of [core](https://github.com/mricharz/Simple-JavaScript-Framework/blob/master/core/target/core-0.0.1-SNAPSHOT.jar "Core-Library") and [ui](https://github.com/mricharz/Simple-JavaScript-Framework/blob/master/ui/target/ui-0.0.1-SNAPSHOT.jar "UI-Library") and load it inside of your project.
 Or you can checkout the repo and import both projects _core_ and _ui_ to your IDE and add dependencies in your maven-project.
 
-Then init the library you only have to add this to your HTML-Head:
+To init the library, you only have to add this to your HTML-Head:
 ```html
 //Before this line you need to load jQuery-Library!
 <script type="text/javascript" src="/core.js"></script>
