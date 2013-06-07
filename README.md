@@ -90,12 +90,12 @@ jQuery.require('foo.bar.Foobar');
 ```
 this will load synchronously: /foo/bar/Foobar.js
 
-You also can load external Scripts using _jQuery.require_
+You also can load external Scripts using _jQuery.require_:
 ```javascript
 jQuery.require('http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js');
 ```
 
-But this will only be loaded once! If this is already loaded, _jQuery.require_ will skip without an error.
+*A script will only be loaded once! If this is already loaded, _jQuery.require_ will skip without an error.*
 
 Logging:
 --------
