@@ -13,9 +13,7 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Shell', {
 		rightContent: 'string'
 	},
 	
-	init: function(domObject, options) {
-		this._super('init', domObject, options);
-		
+	init: function() {
 		//update size of canvas
 		this._updateSize();
 		window.addEventListener("orientationchange", jQuery.proxy(this._updateSize, this));

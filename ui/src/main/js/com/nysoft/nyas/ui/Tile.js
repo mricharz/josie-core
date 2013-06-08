@@ -9,9 +9,7 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Tile', {
 		onClose: 'function'
 	},
 	
-	init: function(domObject, options) {
-		this._super('init', domObject, options);
-		
+	init: function() {
 		//get tileContainer
 		if(this.getDom()) {
 			this.setTilescontainer(this.getDom().parents('.tile-container'));
@@ -24,7 +22,7 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Tile', {
 	_renderControl: function() {
 		if(this.getDom()) {
 			this.getDom().addClass('tile');
-			this.getDom.html(
+			this.getDom().html(
 				'<h3></h3>'
 			);
 			this.title = this.getDom().children('h3');
@@ -40,7 +38,7 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Tile', {
 	},
 	
 	setTitle: function(title) {
-		if(typeof object == 'string') {
+		if(typeof title == 'string') {
 			this.setProperty('title', title);
 			if(this.title) {
 				this.title.text(title);	

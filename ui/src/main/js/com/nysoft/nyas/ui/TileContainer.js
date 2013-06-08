@@ -2,13 +2,11 @@ jQuery.require('com.nysoft.nyas.core.Control');
 
 com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.TileContainer', {
 	meta: {
-		tiles: 'object',
+		tiles: 'string',
 		title: 'string'
 	},
 
-	init: function(domObject, options) {
-		this._super('init', domObject, options);
-		
+	init: function() {
 		//update properties to force draw in dom
 		this.setTitle(this.getTitle());
 		this.setTiles(this.getTiles());
@@ -32,14 +30,20 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.TileContainer', {
 		}
 	},
 	
-	addTile: function(tile) {
-		if(!this.getTiles()) {
-			this.setTiles([]);
+	setTitle: function(title) {
+		if(typeof title == 'string' || title == null) {
+			this.setProperty('title', title);
+			if(this.title) {
+				this.title.text(title);
+			}
 		}
-		if(typeof tile == 'object') {
-			this.getTiles().push(tile);
+	},
+	
+	setTiles: function(object) {
+		if(typeof object == 'string' || object == null) {
+			this.setProperty('tiles', object);
 			if(this.container) {
-				tile.attachTo(this.container);
+				this.container.html(object).children('[data-jsclass]').generateObject();
 			}
 		}
 	}

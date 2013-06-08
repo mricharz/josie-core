@@ -41,6 +41,7 @@
  */
 jQuery.declare('com.nysoft.nyas.core.BaseObject');
 jQuery.require('com.nysoft.nyas.core.Exception');
+jQuery.require('com.nysoft.nyas.core.EventStack');
 
 com.nysoft.nyas.core.BaseObject = function() {};
 
@@ -56,12 +57,13 @@ com.nysoft.nyas.core.BaseObject.extend = function (className, classDescObject) {
     //generate namespace for class
     var nsScopes = className.split('.');
     className = nsScopes.pop();
-    var base = jQuery.declare(nsScopes.join('.'));
+    var nameSpace = nsScopes.join('.');
+    var base = jQuery.declare(nameSpace);
 
     //Declare class
     base[className] = jQuery.extend(function () {
         this.aProperties = [];
-
+        
         this.setProperty = function (key, value) {
             this.aProperties['_'+key] = value;
         };
@@ -102,14 +104,27 @@ com.nysoft.nyas.core.BaseObject.extend = function (className, classDescObject) {
         	}
         };
         
-        if(!init && this.init)
+        if(!init && this.init) {
+        	var object = this;
+        	while(object.$parent) {
+        		object = object.$parent;
+        		com.nysoft.nyas.core.EventStack.trigger(object.className+'.onBeforeInit', this, arguments);
+        	}
+        	com.nysoft.nyas.core.EventStack.trigger(this.className+'.onBeforeInit', this, arguments);
             this.init.apply(this, arguments);
+            var object = this;
+            while(object.$parent) {
+        		object = object.$parent;
+        		com.nysoft.nyas.core.EventStack.trigger(object.className+'.onAfterInit', this, arguments);
+        	}
+            com.nysoft.nyas.core.EventStack.trigger(this.className+'.onAfterInit', this, arguments);
+        }
     }, base[className]);
     //abstract this
     init = true;
     base[className].prototype = new this();
     base[className].prototype.$parent = new this();
-    base[className].prototype.className = className;
+    base[className].prototype.className = nameSpace+'.'+className;
     init = false;
     base[className].extend = this.extend;
     base[className].parseMetadata = this.parseMetadata;
