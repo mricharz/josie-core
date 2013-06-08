@@ -1,8 +1,7 @@
 jQuery.require('com.nysoft.nyas.core.BaseObject');
-jQuery.require('com.nysoft.nyas.core.EventStack');
 
 //onBeforeInit
-com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.Control.onBeforeInit', function(e, data) {
+com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.Control', 'onBeforeInit', function(e, data) {
 	var oControlObject = e[0], arguments = e[1], domObject, options;
 	domObject = arguments[0] || null;
 	options = arguments[1] || null;
@@ -23,7 +22,7 @@ com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.Control.onBeforeInit'
 		}
 		domObject.empty();
 	} else {
-		oControlObjectv.setDom(jQuery('<div />'));
+		oControlObject.setDom(jQuery('<div />'));
 	}
 	oControlObject.setProperties(options);
 	
@@ -32,16 +31,29 @@ com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.Control.onBeforeInit'
 });
 
 //onAfterInit
-com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.Control.onAfterInit', function(e, data) {
+com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.Control', 'onAfterInit', function(e, data) {
 	var oControlObject = e[0], arguments = e[1], domObject, options;
 	domObject = arguments[0] || null;
 	options = arguments[1] || null;
 	
 	//render control
+	oControlObject.trigger('onBeforeRenderer');
 	oControlObject._renderControl();
-	
+
 	//make dom-reference
 	oControlObject._setReference();
+	
+	//update all properties to force rendering
+	var aProperties = oControlObject.getProperties();
+	jQuery.each(aProperties, function(key, value) {
+		var setter = 'set'+jQuery.utils.capitalize(key.slice(1));
+		if(oControlObject[setter]) {
+			jQuery.log.trace('Call '+setter, value);
+			oControlObject[setter].call(oControlObject, value);
+		}
+	});
+	oControlObject.trigger('onAfterRenderer');
+	
 });
 
 com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Control', {
@@ -77,9 +89,6 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Control', {
 		} else {
 			domObject.prepend(this.getDom());
 		}
-	},
-	
-	getEventStack: function() {
-		return com.nysoft.nyas.core.EventStack;
 	}
+	
 });

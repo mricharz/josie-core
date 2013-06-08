@@ -13,8 +13,6 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Button', {
 		if(this.getDom()) {
 			this.getDom().addClass('button');
 			this.getDom().html('<span class="icon" /><span class="text" />');
-			this.setText(this.getText());
-			this.setIcon(this.getIcon());
 			this.getDom().click(jQuery.proxy(function(e) {
 				this.getClick().call(this, e);
 			}, this));

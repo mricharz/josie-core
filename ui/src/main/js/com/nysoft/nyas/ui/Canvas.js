@@ -9,12 +9,15 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Canvas', {
 	
 	init: function() {
 		//update size of canvas
-		this._updateSize();
-		window.addEventListener("orientationchange", jQuery.proxy(this._updateSize, this));
-		window.addEventListener("resize", jQuery.proxy(this._updateSize, this));
+		this.bindEvent('onAfterRenderer', function() {
+			this._updateSize();
+			window.addEventListener("orientationchange", jQuery.proxy(this._updateSize, this));
+			window.addEventListener("resize", jQuery.proxy(this._updateSize, this));
+		});
 	},
 	
 	_updateSize: function() {
+		jQuery.log.trace('Canvas::updateSize');
 		var parent = this.getDom().parent();
 		if(parent && parent.get(0) && parent.get(0).nodeName.toLowerCase() == 'body') {
 			parent = jQuery(window);
@@ -27,6 +30,7 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Canvas', {
 	},
 	
 	_renderControl: function() {
+		jQuery.log.trace('Canvas::renderControl');
 		//setting id to domObject
 		this.getDom().attr('id', this.getId());
 		//add canvas-CSSClass

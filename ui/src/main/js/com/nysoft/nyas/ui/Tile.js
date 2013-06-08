@@ -14,9 +14,6 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Tile', {
 		if(this.getDom()) {
 			this.setTilescontainer(this.getDom().parents('.tile-container'));
 		}
-		
-		//update properties to force draw in dom
-		this.setTitle(this.getTitle());
 	},
 	
 	_renderControl: function() {

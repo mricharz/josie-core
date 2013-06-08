@@ -5,12 +5,6 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.TileContainer', {
 		tiles: 'string',
 		title: 'string'
 	},
-
-	init: function() {
-		//update properties to force draw in dom
-		this.setTitle(this.getTitle());
-		this.setTiles(this.getTiles());
-	},
 	
 	_renderControl: function() {
 		if(this.getDom()) {

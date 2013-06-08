@@ -151,6 +151,10 @@ jQuery.utils = {
 	    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
 	},
 	
+	capitalize: function(value) {
+		return value.charAt(0).toUpperCase() + value.slice(1);
+	}
+	
 };
 
 jQuery.loadCSS = function(url) {

@@ -62,7 +62,7 @@ com.nysoft.nyas.core.BaseObject.extend = function (className, classDescObject) {
 
     //Declare class
     base[className] = jQuery.extend(function () {
-        this.aProperties = [];
+        this.aProperties = {};
         
         this.setProperty = function (key, value) {
             this.aProperties['_'+key] = value;
@@ -104,20 +104,29 @@ com.nysoft.nyas.core.BaseObject.extend = function (className, classDescObject) {
         	}
         };
         
+        this.bindEvent = function(sEventName, fEventHandlerFunction, oData) {
+        	this.getEventStack().bind(this ,sEventName, fEventHandlerFunction, this, oData);
+        };
+        
+        this.unbindEvent = function(sEventName) {
+        	this.getEventStack().unbind(this, sEventName);
+        };
+        
+        this.trigger = function() {
+        	var args = [];
+    		Array.prototype.push.apply(args, arguments);
+    		args.unshift(this);
+        	this.getEventStack().trigger.apply(this.getEventStack(), args);
+        };
+        
+    	this.getEventStack = function() {
+    		return com.nysoft.nyas.core.EventStack;
+    	};
+        
         if(!init && this.init) {
-        	var object = this;
-        	while(object.$parent) {
-        		object = object.$parent;
-        		com.nysoft.nyas.core.EventStack.trigger(object.className+'.onBeforeInit', this, arguments);
-        	}
-        	com.nysoft.nyas.core.EventStack.trigger(this.className+'.onBeforeInit', this, arguments);
+        	this.trigger('onBeforeInit', this, arguments);
             this.init.apply(this, arguments);
-            var object = this;
-            while(object.$parent) {
-        		object = object.$parent;
-        		com.nysoft.nyas.core.EventStack.trigger(object.className+'.onAfterInit', this, arguments);
-        	}
-            com.nysoft.nyas.core.EventStack.trigger(this.className+'.onAfterInit', this, arguments);
+            this.trigger('onAfterInit', this, arguments);
         }
     }, base[className]);
     //abstract this
@@ -132,7 +141,7 @@ com.nysoft.nyas.core.BaseObject.extend = function (className, classDescObject) {
     this.parseMetadata = function (metadata) {
         jQuery.each(metadata, function (key, type) {
             type = (type) ? type.toLowerCase() : type;
-            var name = key.charAt(0).toUpperCase() + key.slice(1);
+            var name = jQuery.utils.capitalize(key);
 
             //prototyping setter (with validation)
             base[className].prototype['set' + name] = function (value) {

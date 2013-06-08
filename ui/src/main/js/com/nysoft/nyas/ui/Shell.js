@@ -14,10 +14,12 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Shell', {
 	},
 	
 	init: function() {
-		//update size of canvas
-		this._updateSize();
-		window.addEventListener("orientationchange", jQuery.proxy(this._updateSize, this));
-		window.addEventListener("resize", jQuery.proxy(this._updateSize, this));
+		//update size of shell
+		this.bindEvent('onAfterRenderer', function() {
+			this._updateSize();
+			window.addEventListener("orientationchange", jQuery.proxy(this._updateSize, this));
+			window.addEventListener("resize", jQuery.proxy(this._updateSize, this));
+		});
 		
 		this.setUser(new com.nysoft.nyas.user.User({
 			name: jQuery.utils.getParameter('name') || 'unnamed user'
@@ -29,14 +31,10 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Shell', {
 		}
 		
 		this.openSocket();
-		
-		//update content to force writing in dom
-		this.setContent(this.getContent());
-		this.setLeftContent(this.getLeftContent());
-		this.setRightContent(this.getRightContent());
 	},
 	
 	_renderControl: function() {
+		jQuery.log.trace('Shell::renderControl');
 		if(this.getDom()) {
 			this.getDom().addClass('shell');
 			this.mainbar = jQuery(
@@ -155,6 +153,7 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Shell', {
 	},
 	
 	_updateSize: function() {
+		jQuery.log.trace('Shell::updateSize');
 		var parent = this.getDom().parent();
 		if(parent && parent.get(0) && parent.get(0).nodeName.toLowerCase() == 'body') {
 			parent = jQuery(window);
