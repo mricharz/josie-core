@@ -97,6 +97,84 @@ jQuery.require('http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js')
 
 *A script will only be loaded once! If this is already loaded, _jQuery.require_ will skip without an error.*
 
+Events:
+-------
+
+For DOM-Events you should use jQuery-Functions.
+
+But for Object-Events there is an EventStack-Class.
+
+### Global Events:
+
+You can set a global eventHandler to a Class. If this event gets executed, each object of this class is affected.
+```javascript
+//Create Class
+com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Control', {
+  init: function() {
+    alert('world');
+  }
+});
+
+//Bind global Class-event
+com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.Control', 'onAfterInit', function(e, data) {
+  alert('hello');
+});
+
+var oControl = new com.nysoft.nyas.core.Control();
+```
+_This will alert "hello" after init-Method of each Control-Object is called._
+
+### Object Events:
+
+You can also set an object eventHandler. If this event gets executed only this one object is affected.
+
+```javascript
+com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Control', {
+  init: function() {
+    alert('world');
+  },
+  
+  foo: function() {
+    this.trigger('onFoo');
+  }
+});
+var oControl = new com.nysoft.nyas.core.Control();
+
+oControl.bindEvent('onFoo', function() {
+  alert('bar');
+});
+
+oControl.foo();
+```
+_This will alert "foo" while calling method foo()._
+
+### Unbind Events:
+
+To unbind event just use:
+```javascript
+this.unbind('onFoo');
+// or
+com.nysoft.nyas.core.EventStack.unbind('com.nysoft.nyas.core.Control', 'onAfterInit');
+```
+
+### Break Event execution:
+
+You can bind 0 ... n eventHanlder to an event. But what you can do to avoid executing next eventHandler in stack?
+
+Easy! Just _return false;_.
+
+```javascript
+oControl.bindEvent('onFoo', function() {
+  alert('bar');
+  return false;
+});
+
+oControl.bindEvent('onFoo', function() {
+  alert('foo');
+});
+```
+_This will alert "bar" but NOT "foo"._
+
 Logging:
 --------
 
