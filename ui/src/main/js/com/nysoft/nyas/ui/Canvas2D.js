@@ -8,9 +8,18 @@ com.nysoft.nyas.ui.Canvas.extend('com.nysoft.nyas.ui.Canvas2D', {
 		measurement: 'boolean'
 	},
 	
-	init: function(domObject, options) {
-		this._super('init', domObject, options);
-		
+	init: function() {
+		this._super('init');
+
+		//init for performance measurement
+		this.fps = 0;
+		this.now = null;
+		this.lastUpdate = (new Date)*1 - 1;
+		this.fpsFilter = 50; //highcap
+	},
+	
+	_renderControl: function() {
+		this._super('_renderControl');
 		if(this.getCanvas()) {
 			//set canvas2d-CSSClass
 			if(!this.getDom().hasClass('canvas2d'))
@@ -18,12 +27,6 @@ com.nysoft.nyas.ui.Canvas.extend('com.nysoft.nyas.ui.Canvas2D', {
 			//get 2d context out of canvas
 			this.setContext(this.getCanvas().get(0).getContext('2d'));
 		}
-		
-		//init for performance measurement
-		this.fps = 0;
-		this.now = null;
-		this.lastUpdate = (new Date)*1 - 1;
-		this.fpsFilter = 50; //highcap
 	},
 	
 	addObject: function(object) {
@@ -46,9 +49,11 @@ com.nysoft.nyas.ui.Canvas.extend('com.nysoft.nyas.ui.Canvas2D', {
 	},
 	
 	renderObjects: function() {
-		jQuery.each(this.getObjects(), jQuery.proxy(function(index, object) {
-			object.render(this, index);
-		}, this));
+		if(this.getObjects()) {
+			jQuery.each(this.getObjects(), jQuery.proxy(function(index, object) {
+				object.render(this, index);
+			}, this));
+		}
 	},
 	
 	render: function() {
@@ -84,12 +89,9 @@ com.nysoft.nyas.ui.Canvas.extend('com.nysoft.nyas.ui.Canvas2D', {
 	  }
 	},
 	
-	animate: function(callback) {
+	animate: function(fCallback) {
 		this.rerender();
 		//next frame
-        return (window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-        function(callback) {
-          window.setTimeout(callback, 1000 / 60);
-        })(callback);
+        jQuery.requestAnimationFrame(fCallback);
     }
 });

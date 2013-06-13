@@ -89,6 +89,10 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Control', {
 		} else {
 			domObject.prepend(this.getDom());
 		}
-	}
+	},
+	
+	detach: function() {
+		this.getDom().detach();
+	},
 	
 });

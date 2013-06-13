@@ -187,6 +187,7 @@ jQuery.declare = function(namespace, base) {
 //Lazyloading
 //TODO: Refactor this!
 jQuery.require = function(className, options) {
+	if(!className) return;
 	if(jQuery.utils.isNamespace(className)) {
 		//check if class already exists
 		if(window[className]) return;
@@ -221,7 +222,6 @@ jQuery.require = function(className, options) {
 
 //Class Pattern
 //Object can given as Return-Value or as Parameter
-//TODO: Refactor this! And use data-[optionName] instead of one attr for all jsoptions=""
 jQuery.fn.generateObject = function (domObject) {
     var objects = [];
     domObject = (jQuery(this).length) ? jQuery(this) : jQuery(domObject);
@@ -229,10 +229,9 @@ jQuery.fn.generateObject = function (domObject) {
         domObject.each(function () {
             //Check if Object already exsist
             var t = jQuery(this);
-            if (!jQuery.data(t.get(0), "object")) {
-                var className = t.data('jsclass') || null,
-                    options = t.data('jsoptions') || "";
-                options = (options) ? "{" + options + "}" : "{}";
+            if (!t.data("object")) {
+            	var className = t.data('class'),
+            		options = t.data();
                 //Check if ClassName is defined
                 if (className) {
                 	//require class
@@ -242,7 +241,7 @@ jQuery.fn.generateObject = function (domObject) {
                 	className = nsScopes.pop();
                 	var base = jQuery.declare(nsScopes.join('.'));
                 	if(jQuery.isFunction(base[className])) {
-	                    var obj = new base[className](t, JSON.parse(options));
+	                    var obj = new base[className](t, options);
 	                    if (obj) {
 	                        objects.push(obj);
 	                    }
@@ -255,6 +254,18 @@ jQuery.fn.generateObject = function (domObject) {
         });
     return objects;
 };
+
+//requestAnimationFrame-wrapper for different browsers
+jQuery.requestAnimationFrame = (function() {
+	return  window.requestAnimationFrame       || 
+	window.webkitRequestAnimationFrame || 
+	window.mozRequestAnimationFrame    || 
+	window.oRequestAnimationFrame      || 
+	window.msRequestAnimationFrame     || 
+	function(fCallback, domElement){
+		window.setTimeout(fCallback, 1000 / 60);
+	};
+})();
 
 //Device detection
 jQuery.agent = navigator.userAgent || navigator.vendor || window.opera;
@@ -283,5 +294,5 @@ window.addEventListener("orientationchange", function() {
 
 jQuery(document).ready(function() {
 	// Autodetect Class Pattern
-	jQuery("body>[data-jsclass]").generateObject();
+	jQuery("body>[data-class]").generateObject();
 });

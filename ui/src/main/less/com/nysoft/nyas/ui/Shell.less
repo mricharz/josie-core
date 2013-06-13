@@ -1,11 +1,13 @@
 .shell {
+	
+	@shellBarHeight: 42px;
 
 	.bar {
-		height: 42px;
+		height: @shellBarHeight;
 		
-		-moz-box-shadow: 0px 0px 10px #888;
-		-webkit-box-shadow: 0px 0px 10px #888;
-		box-shadow: 0px 0px 10px #888;
+		-moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
+		-webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
+		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
 		
 		background: rgb(255,255,255);
 		background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(229,229,229,1) 100%);
@@ -35,23 +37,28 @@
 	}
 	
 	.sidebar, .content {
-		float: left;
-		overflow: hidden;
-		
-		&.right {
-			float: right;
-		}
+		overflow-x: hidden;
+		overflow-y: auto;
+	}
+	
+	.content {
+		z-index:-1000;
 	}
 	
 	.sidebar {
-		width: 0px;	
+		margin-top: @shellBarHeight;
+		position: absolute;
+		top: 0px;
+		width: 0px;
 		
 		&.left {
-			border-right:1px solid grey;
+			left: 0px;
+			border-right: 1px solid grey;
 		}
 		
 		&.right {
-			border-left:1px solid grey;
+			right: 0px;
+			border-left: 1px solid grey;
 		}
 	}
 }

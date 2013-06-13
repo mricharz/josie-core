@@ -20,6 +20,13 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.TileContainer', {
 			this.container = this.getDom().find('.inner');
 			this.btnLeft = this.getDom().find('.arrow.left');
 			this.btnRight = this.getDom().find('.arrow.right');
+			
+			//hide buttons on not desktop
+			if(jQuery.device.mobile) {
+				this.btnLeft.hide();
+				this.btnRight.hide();
+			}
+			
 			this.title = this.getDom().children('h2');
 		}
 	},
@@ -37,7 +44,7 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.TileContainer', {
 		if(typeof object == 'string' || object == null) {
 			this.setProperty('tiles', object);
 			if(this.container) {
-				this.container.html(object).children('[data-jsclass]').generateObject();
+				this.container.html(object).children('[data-class]').generateObject();
 			}
 		}
 	}

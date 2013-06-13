@@ -38,7 +38,7 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Canvas', {
 			this.getDom().addClass('canvas');
 		//create background domObject
 		this.setBackground(jQuery('<div id="'+this.getId()+'-bg" class="canvas-background" />'));
-		this.getDom().append(this.getCanvas());
+		this.getDom().append(this.getBackground());
 		//create canvas domObject
 		this.setCanvas(jQuery('<canvas id="'+this.getId()+'-canvas" />'));
 		this.getDom().append(this.getCanvas());
