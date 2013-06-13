@@ -1,7 +1,7 @@
 Simple-JavaScript-Framework
 ===========================
 
-This is a simple and small OOP framework based on jQuery
+This is a simple and small OOP framework based on jQuery. More _Java_ than _Script_.
 
 
 Namespaces:
