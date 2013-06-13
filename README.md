@@ -200,6 +200,22 @@ Utils:
 
 There are coming some little methods with the core.js. Have a look at [jQuery.utils](https://github.com/mricharz/Simple-JavaScript-Framework/blob/master/core/src/main/js/core.js#L95 "jQuery.utils in core.js").
 
+DOM Class Pattern:
+------------------
+
+You can split Javascript and HTML by using Class Pattern.
+```javascript
+<div data-class="com.nysoft.nyas.ui.Button" data-text="FooBar"></div>
+```
+_This will generate a Button onto this DOM-Element._
+
+The Class-Pattern gets executed on _jQuery(document).ready()_
+You can execute the Class-Pattern manually by using _jQuery().generateObject()_
+```javascript
+var aGeneratedObjects = jQuery('div.foo > [data-class]').generateObject();
+```
+_It will generate the Objects and return this as a list._
+
 Dependencies:
 -------------
 
