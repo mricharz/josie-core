@@ -2,7 +2,7 @@ jQuery.require('com.nysoft.nyas.ui.Canvas.StrokeAndFillObject');
 
 com.nysoft.nyas.ui.Canvas.StrokeAndFillObject.extend('com.nysoft.nyas.ui.Canvas.Square', {
 	meta: {
-		width: 'string'
+		width: 'number'
 	},
 	
 	init: function(options) {

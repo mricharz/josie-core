@@ -2,7 +2,7 @@ jQuery.require('com.nysoft.nyas.ui.Canvas.Square');
 
 com.nysoft.nyas.ui.Canvas.Square.extend('com.nysoft.nyas.ui.Canvas.Rectangle', {
 	meta: {
-		height: 'string'
+		height: 'number'
 	},
 	
 	init: function(options) {

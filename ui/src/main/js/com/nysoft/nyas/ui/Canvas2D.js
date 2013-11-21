@@ -27,6 +27,17 @@ com.nysoft.nyas.ui.Canvas.extend('com.nysoft.nyas.ui.Canvas2D', {
 			//get 2d context out of canvas
 			this.setContext(this.getCanvas().get(0).getContext('2d'));
 		}
+		
+		//init loops
+		this.loops = {};
+		//start animationLooping
+		this._animationLoop();
+		
+		//init for performance measurement
+		this.fps = 0;
+		this.now = null;
+		this.lastUpdate = (new Date)*1 - 1;
+		this.fpsFilter = 50; //highcap
 	},
 	
 	addObject: function(object) {
@@ -34,6 +45,16 @@ com.nysoft.nyas.ui.Canvas.extend('com.nysoft.nyas.ui.Canvas2D', {
 			this.setObjects([]);
 		}
 		return this.getObjects().push(object)-1;
+	},
+	
+	addObjects: function(aObjects) {
+		var aIds = [];
+		if(aObjects && aObjects.length) {
+			jQuery.each(aObjects, jQuery.proxy(function(index, oObject){
+				aIds.push(this.addObject(oObject));
+			}, this));
+		}
+		return aIds;
 	},
 	
 	clearCanvas: function() {
@@ -89,9 +110,39 @@ com.nysoft.nyas.ui.Canvas.extend('com.nysoft.nyas.ui.Canvas2D', {
 	  }
 	},
 	
-	animate: function(fCallback) {
-		this.rerender();
-		//next frame
-        jQuery.requestAnimationFrame(fCallback);
-    }
+	addLoop: function(key, fnAnimation) {
+		this.loops[key] = fnAnimation;
+	},
+	
+	removeLoop: function(key) {
+		delete this.loops[key];
+	},
+	
+	getLoop: function(key) {
+		return this.loops[key];
+	},
+	
+	getLoops: function() {
+		return this.loops;
+	},
+	
+	_animationLoop: function() {
+		if(this.loops) {
+			var bHaveToRerender = false;
+			//execute loops
+			jQuery.each(this.loops, jQuery.proxy(function(key, fnAnimation) {
+				jQuery.log.trace('Running canvas-Loop: '+key);
+				fnAnimation.call(this, key);
+				bHaveToRerender = true;
+			}, this));
+			//rerender canvas (only if needed)
+			(bHaveToRerender) && this.rerender();
+		}
+		//continue the main-loop
+		return (window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+		        function(callback) {
+		          window.setTimeout(callback, 1000 / 60);
+		        })(jQuery.proxy(this._animationLoop, this));
+	}
+	
 });

@@ -4,10 +4,28 @@ jQuery.require('css/com/nysoft/nyas/ui.css', {dataType: 'stylesheet'});
 com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Canvas', {
 	meta: {
 		canvas: 'object',
-		background: 'object'
+		background: 'object',
+		width: 'number',
+		height: 'number'
 	},
 	
-	init: function() {
+	init: function(domObject, options) {
+		if(domObject) {
+			this.setDom(domObject);
+		} else {
+			this.setDom(jQuery('<div />'));
+			//we need to add this to DOM or we cannot use it
+			this.getDom().hide();
+			jQuery('body').append(this.getDom());
+		}
+		this.setProperties(options);
+		(!this.getId()) && this.setId(jQuery.utils.uniqueId());
+		
+		this._renderCanvasControl();
+		
+		//initial setup canvas size
+		this._updateCanvasSize();
+
 		//update size of canvas
 		this.bindEvent('onAfterRenderer', function() {
 			this._updateSize();
@@ -27,6 +45,24 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Canvas', {
 		this.getDom().css('width', parent.innerWidth());
 		this.getCanvas().get(0).height = parent.innerHeight();
 		this.getCanvas().get(0).width = parent.innerWidth();
+	destroy: function() {
+		delete this.getContext();
+		delete this.getCanvas();
+		this.getDom().remove();
+	},
+	
+	_updateCanvasSize: function() {
+		var parent = this.getDom().parent() || jQuery('body');
+		
+		var innerHeight = parent.innerHeight();
+		var innerWidth = parent.innerWidth();
+		var width = (this.getWidth() >= innerWidth || !this.getWidth()) ? innerWidth : this.getWidth();
+		var height = (this.getHeight() >= innerHeight || !this.getHeight()) ? innerHeight : this.getHeight();
+		
+		this.getDom().css('height', height);
+		this.getDom().css('width', width);
+		this.getCanvas().get(0).height = height;
+		this.getCanvas().get(0).width = width;
 	},
 	
 	_renderControl: function() {

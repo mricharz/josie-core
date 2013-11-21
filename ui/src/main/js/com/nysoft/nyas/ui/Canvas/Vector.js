@@ -82,6 +82,15 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.ui.Canvas.Vector', {
 	},
 	
 	init: function(x, y) {
+		if(x !== undefined && x.length) {
+			if(jQuery.isPlainObject(x)) {
+				this.setX(x.x);
+				this.setX(x.y);
+			} else {
+				this.setX(x[0]);
+				this.setX(x[1]);
+			}
+		}
 		if(x !== undefined && y !== undefined) {
 			this.setX(x);
 			this.setY(y);
