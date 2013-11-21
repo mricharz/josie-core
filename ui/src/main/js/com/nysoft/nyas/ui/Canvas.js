@@ -62,7 +62,7 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Canvas', {
 		//create canvas domObject
 		this.setCanvas(jQuery('<canvas id="'+this.getId()+'-canvas" />'));
 		this.getDom().append(this.getCanvas());
-	}
+	},
 	
 	_renderBackground: function() {
 		if(!this.getBackground()) {
