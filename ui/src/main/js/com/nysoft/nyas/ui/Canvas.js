@@ -13,7 +13,6 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Canvas', {
 		if(domObject) {
 			this.setDom(domObject);
 		} else {
-			this.setDom(jQuery('<div />'));
 			//we need to add this to DOM or we cannot use it
 			this.getDom().hide();
 			jQuery('body').append(this.getDom());
@@ -21,11 +20,6 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Canvas', {
 		this.setProperties(options);
 		(!this.getId()) && this.setId(jQuery.utils.uniqueId());
 		
-		this._renderCanvasControl();
-		
-		//initial setup canvas size
-		this._updateCanvasSize();
-
 		//update size of canvas
 		this.bindEvent('onAfterRenderer', function() {
 			this._updateSize();
@@ -35,27 +29,12 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Canvas', {
 	},
 	
 	_updateSize: function() {
-		jQuery.log.trace('Canvas::updateSize');
-		var parent = this.getDom().parent();
-		if(parent && parent.get(0) && parent.get(0).nodeName.toLowerCase() == 'body') {
-			parent = jQuery(window);
-		}
-		jQuery.log.trace('Canvas::_updateSize', parent, parent.innerHeight(), parent.innerWidth());
-		this.getDom().css('height', parent.innerHeight());
-		this.getDom().css('width', parent.innerWidth());
-		this.getCanvas().get(0).height = parent.innerHeight();
-		this.getCanvas().get(0).width = parent.innerWidth();
-	destroy: function() {
-		delete this.getContext();
-		delete this.getCanvas();
-		this.getDom().remove();
-	},
-	
-	_updateCanvasSize: function() {
-		var parent = this.getDom().parent() || jQuery('body');
-		
+		var parent = this.getDom().parent() || jQuery(window);
 		var innerHeight = parent.innerHeight();
 		var innerWidth = parent.innerWidth();
+		
+		jQuery.log.trace('Canvas::_updateSize', parent, innerHeight, innerWidth);
+		
 		var width = (this.getWidth() >= innerWidth || !this.getWidth()) ? innerWidth : this.getWidth();
 		var height = (this.getHeight() >= innerHeight || !this.getHeight()) ? innerHeight : this.getHeight();
 		
@@ -63,6 +42,12 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Canvas', {
 		this.getDom().css('width', width);
 		this.getCanvas().get(0).height = height;
 		this.getCanvas().get(0).width = width;
+	},
+	
+	destroy: function() {
+		delete this.getContext();
+		delete this.getCanvas();
+		this.getDom().remove();
 	},
 	
 	_renderControl: function() {
@@ -73,10 +58,20 @@ com.nysoft.nyas.core.Control.extend('com.nysoft.nyas.ui.Canvas', {
 		if(!this.getDom().hasClass('canvas'))
 			this.getDom().addClass('canvas');
 		//create background domObject
-		this.setBackground(jQuery('<div id="'+this.getId()+'-bg" class="canvas-background" />'));
-		this.getDom().append(this.getBackground());
+		this._renderBackground();
 		//create canvas domObject
 		this.setCanvas(jQuery('<canvas id="'+this.getId()+'-canvas" />'));
 		this.getDom().append(this.getCanvas());
+	}
+	
+	_renderBackground: function() {
+		if(!this.getBackground()) {
+			this.setBackground(jQuery('<div id="'+this.getId()+'-bg" class="canvas-background" />'));
+		} else {
+			if(!this.getBackground().hasClass('canvas-background')) {
+				this.getBackground().addClass('canvas-background');
+			}
+		}
+		this.getDom().append(this.getBackground());
 	}
 });

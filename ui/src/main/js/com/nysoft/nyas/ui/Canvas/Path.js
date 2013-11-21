@@ -6,7 +6,7 @@ jQuery.require('com.nysoft.nyas.ui.Canvas.CanvasObject');
 com.nysoft.nyas.ui.Canvas.StrokeAndFillObject.extend('com.nysoft.nyas.ui.Canvas.Path', {
 	
 	meta: {
-		nodes: 'object'
+		nodes: 'object',
 		autoClose: 'boolean'
 	},
 	
