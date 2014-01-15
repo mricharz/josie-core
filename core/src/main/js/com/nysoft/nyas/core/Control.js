@@ -5,17 +5,24 @@ com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.Control', 'onBeforeIn
 	var oControlObject = e[0], arguments = e[1], domObject, options;
 	domObject = arguments[0] || null;
 	options = arguments[1] || null;
-	
-	if(domObject) {
+
+	if (domObject) {
 		oControlObject.setDom(domObject);
-		//capture content & and clear it
+		// capture content & and clear it
 		var properties = domObject.children('[data-property]');
-		if(properties.length > 0) {
+		if (properties.length > 0) {
 			properties.each(function() {
 				jqThis = jQuery(this);
-				var propertyName = jqThis.data('property');
-				jQuery.log.trace('Get PropertyValue of: '+propertyName, jqThis.html());
-				options[propertyName] = jqThis.html();
+				var propertyName = jQuery.utils.htmlAttr2CamelCase(jqThis.data('property'));
+				jQuery.log.trace('Get PropertyValue of: '
+						+ propertyName, jqThis.html());
+				var value;
+				try {
+					value = jQuery.parseJSON(jqThis.html());
+				} catch (err) {
+					value = jqThis.html();
+				}
+				options[propertyName] = value;
 			});
 		} else {
 			options.content = domObject.html();
@@ -25,9 +32,10 @@ com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.Control', 'onBeforeIn
 		oControlObject.setDom(jQuery('<div />'));
 	}
 	oControlObject.setProperties(options);
-	
-	//set default id
-	(!oControlObject.getId()) && oControlObject.setId(jQuery.utils.uniqueId());
+
+	// set default id
+	(!oControlObject.getId())
+			&& oControlObject.setId(jQuery.utils.uniqueId());
 });
 
 //onAfterInit
@@ -94,5 +102,10 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Control', {
 	detach: function() {
 		this.getDom().detach();
 	},
+	
+	rerender: function() {
+		this.getDom().empty();
+		this._renderControl();
+	}
 	
 });

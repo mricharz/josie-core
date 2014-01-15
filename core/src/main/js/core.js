@@ -122,26 +122,34 @@ jQuery.utils = {
 	    return jQuery.utils.S4() + jQuery.utils.S4() + jQuery.utils.S4() + jQuery.utils.S4();
 	},
 	
-	isjQuery: function(obj){
-	  return obj && obj.hasOwnProperty && obj instanceof jQuery;
+	isjQuery: function(oObj){
+	  return oObj && oObj.hasOwnProperty && oObj instanceof jQuery;
 	},
 	
-	isUrl: function(url) {
+	isUrl: function(sUrl) {
 		var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
 				  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
 				  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
 				  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
 				  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
 				  '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-		if(!pattern.test(url)) {
+		if(!pattern.test(sUrl)) {
 			return false;
 		}
 		return true;
 	},
 	
-	isNamespace: function(namespace) {
+	isBinding: function(sSelector) {
+		var pattern = new RegExp('^\{["\']..*["\'].\}$','i'); // fragment locator
+		if(!pattern.test(sSelector)) {
+			return false;
+		}
+		return true;
+	},
+	
+	isNamespace: function(sNamespace) {
 		var pattern = new RegExp('^([a-zA-Z0-9_-]*\\.?)*$', 'i');
-		if(!pattern.test(namespace)) {
+		if(!pattern.test(sNamespace)) {
 			return false;
 		}
 		return true;
@@ -153,6 +161,12 @@ jQuery.utils = {
 	
 	capitalize: function(value) {
 		return value.charAt(0).toUpperCase() + value.slice(1);
+	},
+	
+	htmlAttr2CamelCase: function(attrName) {
+		return attrName.replace(/-(.)/g, function(m, p1) { 
+            return p1.toUpperCase(); 
+        });
 	}
 	
 };
@@ -184,6 +198,8 @@ jQuery.declare = function(namespace, base) {
     return base;
 };
 
+jQuery.requireRoot = "/";
+
 //Lazyloading
 //TODO: Refactor this!
 jQuery.require = function(className, options) {
@@ -192,7 +208,7 @@ jQuery.require = function(className, options) {
 		//check if class already exists
 		if(window[className]) return;
 		//convert className into path
-		className = className.replace(/\./g, '/')+'.js';
+		className = jQuery.requireRoot + className.replace(/\./g, '/')+'.js';
 	}
 	options = jQuery.extend({
 		async: false,
@@ -255,6 +271,10 @@ jQuery.fn.generateObject = function (domObject) {
     return objects;
 };
 
+jQuery.byId = function(sId) {
+	return jQuery('#'+sId).data('control');
+};
+
 //requestAnimationFrame-wrapper for different browsers
 jQuery.requestAnimationFrame = (function() {
 	return  window.requestAnimationFrame       || 
@@ -294,5 +314,5 @@ window.addEventListener("orientationchange", function() {
 
 jQuery(document).ready(function() {
 	// Autodetect Class Pattern
-	jQuery("body>[data-class]").generateObject();
+	jQuery("body [data-class]").generateObject();
 });

@@ -35,7 +35,7 @@
 		<resources>
 			<resource>
 				<directory>src/main/js</directory>
-				<targetPath>META-INF/resources/</targetPath>
+				<targetPath>META-INF/resources/cdn/js</targetPath>
 			</resource>
 		</resources>
 		<pluginManagement>
