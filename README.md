@@ -176,6 +176,56 @@ oControl.bindEvent('onFoo', function() {
 ```
 _This will alert "bar" but NOT "foo"._
 
+Databinding:
+------------
+
+### Creating a Model
+
+You can create a Datamodel with:
+```javascript
+var oModel = new com.nysoft.nyas.core.Model.JSONModel({
+  src: '/url/to/json',
+  key: 'modelKey' // optional. useful if you have more than one datamodel.
+});
+```
+
+or with:
+
+```html
+<div data-class="com.nysoft.nyas.core.Model.JSONModel" data-src="/admin/cache/listCaches"></div>
+```
+
+### Binding Data
+
+You can bind data to many object and to all managed objects.
+
+just pass the data-selector as property-content like this:
+```javascript
+/*
+Your json-data is something like this:
+
+{
+  data: [
+    {
+      text: 'Submit'
+    },
+    {
+      text: 'foobar'
+    }
+  ]
+}
+
+*/
+
+new com.nysoft.nyas.ui.Button({
+  text: '{".data .text:first-child"}'
+});
+```
+
+The binding gets automatically loaded and the control gets automatically updated if the data inside the model changes.
+You can normal CSS3 Selectors to select data from your datamodel.
+For more information see: http://jsonselect.org/
+
 Logging:
 --------
 
