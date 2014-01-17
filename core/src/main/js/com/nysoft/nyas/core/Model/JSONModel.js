@@ -6,7 +6,8 @@ com.nysoft.nyas.core.Model.extend('com.nysoft.nyas.core.Model.JSONModel', {
 		src: 'string'
 	},
 	
-	init: function(options) {
+	init: function(domObject, options) {
+		jQuery.log.trace('Init JSONModel');
 		this._super('init', options);
 	},
 	

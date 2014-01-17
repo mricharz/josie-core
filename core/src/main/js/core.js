@@ -139,12 +139,19 @@ jQuery.utils = {
 		return true;
 	},
 	
-	isBinding: function(sSelector) {
-		var pattern = new RegExp('^\{["\']..*["\'].\}$','i'); // fragment locator
-		if(!pattern.test(sSelector)) {
-			return false;
-		}
-		return true;
+	isSelector: function(sSelector) {
+		var ns = document.styleSheets[0];
+	    if(!ns) {
+	        document.getElementsByTagName('head')[0].appendChild(document.createElement('style'));
+	        ns = document.styleSheets[0];
+	    }
+	    try {
+	        ns.insertRule(sSelector+" {}", 0);
+	        ns.deleteRule(0);
+	        return true;
+	    } catch(e) {
+	        return false;
+	    }
 	},
 	
 	isNamespace: function(sNamespace) {
@@ -223,12 +230,13 @@ jQuery.require = function(className, options) {
 	}
 	//check if resource is already loaded
 	for(p=0;p<jQuery._resources.length;p++) if (className === jQuery._resources[p]) return;
-	jQuery._resources.push(className);
 	//load it
 	if(options.dataType == 'stylesheet') {
 		jQuery.loadCSS(options.url);
+		jQuery._resources.push(className);
 	} else {
 		jQuery.ajax(options).done(function(script, textStatus) {
+			jQuery._resources.push(className);
 			jQuery.log.trace('Loaded: '+options.url+' - '+textStatus);
 		}).fail(function(jqxhr, settings, exception) {
 			jQuery.log.error('Could not load: '+options.url+' - '+jqxhr.status+' '+exception);

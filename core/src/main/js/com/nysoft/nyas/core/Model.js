@@ -1,18 +1,23 @@
-jQuery.require('com.nysoft.nyas.core.BaseObject');
-jQuery.require('http://jsonselect.org/js/jsonselect.min.js');
+jQuery.require('com.nysoft.nyas.core.ManagedObject');
+jQuery.require('org.jsonselect.JSONSelect');
 
-com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Model', {
+com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Model', {
 	
 	meta: {
 		data: 'object',
-		bindings: 'object'
+		bindings: 'object',
+		key: 'string'
 	},
 	
-	init: function(options) {
+	init: function(domObject, options) {
+		this._super('init', arguments);
 		//setup model
 		this.setProperties(options);
 		//init bindings array to hold bindings
 		this.setBindings([]);
+		jQuery.log.trace('Referencing Model: '+this.getKey());
+		//reference model instance
+		com.nysoft.nyas.core.Model._models[this.getKey()] = this;
 	},
 	
 	update: function(bForceRerender) {
@@ -29,6 +34,17 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Model', {
 		jQuery.each(this.getBindings(), jQuery.proxy(function(oBinding) {
 			this._updateBinding(oBinding, bForceRerender);
 		}, this));
+	},
+	
+	getData: function() {
+		return this.getProperty('data');
+	},
+	
+	setData: function(oValue, bPreventBindingUpdate) {
+		this.setProperty('data', oValue);
+		if(!bPreventBindingUpdate) {
+			this._updateBindings(true);
+		}
 	},
 	
 	_updateBinding: function(oBinding, bForceRerender) {
@@ -63,3 +79,24 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Model', {
 	}
 
 });
+
+com.nysoft.nyas.core.Model._models = [];
+
+com.nysoft.nyas.core.Model.getModel = function(sModelKey) {
+	return com.nysoft.nyas.core.Model._models[sModelKey];
+};
+
+com.nysoft.nyas.core.Model.addBinding = function(oObject, sPropertyName, sSelector) {
+	var aMatches = sSelector.match(/^(.*?);/);
+	var sModelKey = '';
+	if(aMatches.length == 2) {
+		sModelKey = aMatches[1];
+		sSelector = sSelector.replace(aMatches[0], '');
+	} 
+	var oModel = com.nysoft.nyas.core.Model.getModel(sModelKey);
+	if(oModel) {
+		oModel.addBinding(oObject, sPropertyName, sSelector);
+	} else {
+		throw new com.nysoft.nyas.core.Exception('Cannot bind property "'+sPropertyName+'"! Model "'+sModelKey+'" not found!');
+	}
+};
