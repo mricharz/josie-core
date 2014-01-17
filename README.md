@@ -48,7 +48,7 @@ This will show a messagebox with text _hello_.
 
 ### Super:
 
-You can call super-class methods by using _\_super()_:
+You can call super-class methods by using \_super()_:
 ```javascript
 this._super('init', argument1, argument2, ...);
 ```
@@ -197,7 +197,7 @@ or with:
 
 ### Binding Data
 
-You can bind data to many object and to all managed objects.
+You can bind data to many objects and to all managed objects.
 
 just pass the data-selector as property-content like this:
 ```javascript
@@ -223,7 +223,7 @@ new com.nysoft.nyas.ui.Button({
 ```
 
 The binding gets automatically loaded and the control gets automatically updated if the data inside the model changes.
-You can normal CSS3 Selectors to select data from your datamodel.
+You can use normal CSS3 Selectors to select data from your datamodel.
 For more information see: http://jsonselect.org/
 
 Logging:
