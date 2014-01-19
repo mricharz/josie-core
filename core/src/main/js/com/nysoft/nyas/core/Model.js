@@ -86,6 +86,19 @@ com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Model', {
 		jQuery.log.trace('Added new binding', oBinding);
 		//update this binding
 		this._updateBinding(oBinding, false);
+	},
+	
+	getBinding: function(oObject, sPropertyName) {
+		var oBinding = null;
+		jQuery.each(this.getBindings(), function() {
+			if(this.object == oObject) {
+				if(this.property == sPropertyName) {
+					oBinding = this;
+					return false;
+				}
+			}
+		});
+		return oBinding;
 	}
 
 });
@@ -93,7 +106,11 @@ com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Model', {
 com.nysoft.nyas.core.Model._models = [];
 
 com.nysoft.nyas.core.Model.getModel = function(sModelKey) {
-	return com.nysoft.nyas.core.Model._models[sModelKey];
+	return com.nysoft.nyas.core.Model.getModels()[sModelKey];
+};
+
+com.nysoft.nyas.core.Model.getModels = function() {
+	return com.nysoft.nyas.core.Model._models;
 };
 
 com.nysoft.nyas.core.Model.addBinding = function(oObject, sPropertyName, sSelector) {
@@ -109,4 +126,16 @@ com.nysoft.nyas.core.Model.addBinding = function(oObject, sPropertyName, sSelect
 	} else {
 		throw new com.nysoft.nyas.core.Exception('Cannot bind property "'+sPropertyName+'"! Model "'+sModelKey+'" not found!');
 	}
+};
+
+com.nysoft.nyas.core.Model.getBinding = function(oObject, sPropertyName) {
+	var oBinding = null;
+	jQuery.each(com.nysoft.nyas.core.Model.getModels(), function() {
+		var oModelBinding = this.getBinding(oObject, sPropertyName);
+		if(oModelBinding) {
+			oBinding = oModelBinding;
+			return false;
+		}
+	});
+	return oBinding;
 };

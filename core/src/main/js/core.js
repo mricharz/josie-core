@@ -140,6 +140,7 @@ jQuery.utils = {
 	},
 	
 	isSelector: function(sSelector) {
+		sSelector = sSelector.replace(/^.*?;/, ''); //remove modelKey
 		var ns = document.styleSheets[0];
 	    if(!ns) {
 	        document.getElementsByTagName('head')[0].appendChild(document.createElement('style'));

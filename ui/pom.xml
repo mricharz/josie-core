@@ -52,11 +52,11 @@
 		<resources>
 			<resource>
 				<directory>src/main/js</directory>
-				<targetPath>META-INF/resources/</targetPath>
+				<targetPath>META-INF/resources/cdn/js</targetPath>
 			</resource>
 			<resource>
 				<directory>target/css</directory>
-				<targetPath>META-INF/resources/css</targetPath>
+				<targetPath>META-INF/resources/cdn/js/css</targetPath>
 			</resource>
 		</resources>
 		
