@@ -6,32 +6,42 @@ com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.ManagedObject', 'onBe
 	domObject = arguments[0] || null;
 	options = arguments[1] || null;
 	
-
 	if (domObject) {
 		oControlObject.setDom(domObject);
 		// capture object properties
-		var properties = domObject.children('[data-property]');
-		if (properties.length > 0) {
-			properties.each(function() {
-				jqThis = jQuery(this);
-				var propertyName = jQuery.utils.htmlAttr2CamelCase(jqThis.data('property'));
-				jQuery.log.trace('Get PropertyValue of: '
-						+ propertyName, jqThis.html());
-				var sContent = jqThis.html();
-				var value;
-				try { //try to parse as JSON-Data and set as property-value
-					value = jQuery.parseJSON(sContent);
-				} catch (err) { //otherwise look for binding selector
-					var sSelector = sContent.replace(/^\{\"/, '').replace(/\"\}$/, '');
-					if(jQuery.utils.isSelector(sSelector)) { //handle binding
-						com.nysoft.nyas.core.Model.addBinding(oControlObject, propertyName, sContent);
-					} else { //fallback: set content as property value
-						value = sContent;
-					}
+		var properties = domObject.data();
+		jQuery.log.trace('Walk through properties', properties);
+		jQuery.each(properties, function(sPropertyName, sValue) {
+			if(sPropertyName == "class") { // skip class-property
+				return true;
+			}
+			var propertyName = jQuery.utils.htmlAttr2CamelCase(sPropertyName);
+			jQuery.log.trace('Get PropertyValue of: '
+					+ propertyName, sValue);
+			var value;
+			//check for shot-hand selector
+			if(sValue && sValue.match) {
+				var aMatches = sValue.match(/^\{(\".*\")\}$/);
+				if(aMatches && aMatches.length == 2) {
+					//enrich shot-hand selector
+					sValue = '{"selector":'+aMatches[1]+'}';
 				}
-				options[propertyName] = value;
-			});
-		}
+			}
+			jQuery.log.trace('enrich object propertie: '+propertyName, sValue);
+			try { //try to parse as JSON-Data and set as property-value
+				value = jQuery.parseJSON(sValue);
+				jQuery.log.trace('Parsed as JSON');
+				//check for selector
+				if(value.selector && jQuery.utils.isSelector(value.selector)) {
+					jQuery.log.trace('has selector binding');
+					com.nysoft.nyas.core.Model.addBinding(oControlObject, propertyName, value.selector);
+				}
+			} catch (err) { //otherwise look for binding selector
+				jQuery.log.trace('Parsed as string-value', err);
+				value = sValue;
+			}
+			options[propertyName] = value;
+		});
 		//aggregate content
 		var jqAggregations = domObject.children('*[data-parent-aggregation]');
 		var oAggregations = {};
@@ -61,7 +71,10 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.ManagedObject', {
 	},
 	
 	init: function(domObject, options) {
-		domObject.detach();
+		jQuery.log.trace('Init ManagedObject', arguments);
+		if(domObject && domObject.detach) {
+			domObject.detach();
+		}
 	},
 	
 	_setReference: function(domObject) {

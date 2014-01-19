@@ -10,13 +10,13 @@ com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Model', {
 	},
 	
 	init: function(domObject, options) {
-		this._super('init', arguments);
+		this._super('init', domObject, options);
 		//setup model
 		this.setProperties(options);
 		//init bindings array to hold bindings
 		this.setBindings([]);
-		jQuery.log.trace('Referencing Model: '+this.getKey());
 		//reference model instance
+		jQuery.log.trace('Referencing Model: '+this.getKey());
 		com.nysoft.nyas.core.Model._models[this.getKey()] = this;
 	},
 	
@@ -26,17 +26,23 @@ com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Model', {
 	},
 	
 	_loadData: function() {
+		if(!this._loadedOnce) {
+			this._loadedOnce = true;
+		}
 		jQuery.log.trace('Loading Model-Data');
 	},
 	
 	_updateBindings: function(bForceRerender) {
 		jQuery.log.trace('Updating bindings. With rerender: '+bForceRerender);
-		jQuery.each(this.getBindings(), jQuery.proxy(function(oBinding) {
+		jQuery.each(this.getBindings(), jQuery.proxy(function(iIndex, oBinding) {
 			this._updateBinding(oBinding, bForceRerender);
 		}, this));
 	},
 	
 	getData: function() {
+		if(!this._loadedOnce) {
+			this._loadData();
+		}
 		return this.getProperty('data');
 	},
 	
@@ -72,10 +78,14 @@ com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Model', {
 		var oBinding = {
 			object: oObject,
 			property: sPropertyName,
-			selector: JSONSelect.compile(sSelector)
+			selector: JSONSelect.compile(sSelector),
+			model: this
 		};
+		//save binding in model
 		this.getBindings().push(oBinding);
 		jQuery.log.trace('Added new binding', oBinding);
+		//update this binding
+		this._updateBinding(oBinding, false);
 	}
 
 });
@@ -88,8 +98,8 @@ com.nysoft.nyas.core.Model.getModel = function(sModelKey) {
 
 com.nysoft.nyas.core.Model.addBinding = function(oObject, sPropertyName, sSelector) {
 	var aMatches = sSelector.match(/^(.*?);/);
-	var sModelKey = '';
-	if(aMatches.length == 2) {
+	var sModelKey;
+	if(aMatches && aMatches.length == 2) {
 		sModelKey = aMatches[1];
 		sSelector = sSelector.replace(aMatches[0], '');
 	} 
