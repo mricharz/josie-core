@@ -103,7 +103,7 @@ com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Model', {
 
 });
 
-com.nysoft.nyas.core.Model._models = [];
+com.nysoft.nyas.core.Model._models = {};
 
 com.nysoft.nyas.core.Model.getModel = function(sModelKey) {
 	return com.nysoft.nyas.core.Model.getModels()[sModelKey];
