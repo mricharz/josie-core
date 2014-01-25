@@ -14,7 +14,7 @@ com.nysoft.nyas.core.Model.extend('com.nysoft.nyas.core.Model.JSONModel', {
 	_loadData: function() {
 		this._super('_loadData');
 		if(this.getSrc()) {
-			jQuery.getJSON(this.getSrc(), jQuery.proxy(this._onSuccess, this)).fail(jQuery.proxy(this._onError, this));
+			jQuery.getJSON(this.getSrc(), jQuery.proxy(this._onSuccess, this)).fail(jQuery.proxy(this._onError, this)).always(jQuery.proxy(this._onAlways, this));
 		}
 	},
 	
@@ -26,6 +26,10 @@ com.nysoft.nyas.core.Model.extend('com.nysoft.nyas.core.Model.JSONModel', {
 	_onError: function(oData) {
 		jQuery.log.error('Error receiving data.', oData);
 		this.trigger('onError', oData);
+	},
+	
+	_onAlways: function(oData) {
+		this.trigger('onAlways', oData);
 	}
 	
 });

@@ -6,6 +6,9 @@ com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.ManagedObject', 'onBe
 	domObject = arguments[0] || null;
 	options = arguments[1] || null;
 	
+	//init binding because we need them soon
+	oControlObject.setBindings({});
+	
 	if (domObject) {
 		oControlObject.setDom(domObject);
 		// capture object properties
@@ -34,7 +37,7 @@ com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.ManagedObject', 'onBe
 				//check for selector
 				if(value.selector && jQuery.utils.isSelector(value.selector)) {
 					jQuery.log.trace('has selector binding');
-					com.nysoft.nyas.core.Model.addBinding(oControlObject, propertyName, value.selector);
+					oControlObject.addBinding(propertyName, value.selector);
 				}
 			} catch (err) { //otherwise look for binding selector
 				jQuery.log.trace('Parsed as string-value', err);
@@ -67,7 +70,8 @@ com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.ManagedObject', 'onBe
 
 com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.ManagedObject', {
 	meta: {
-		dom: 'object'
+		dom: 'object',
+		bindings: 'object'
 	},
 	
 	init: function(domObject, options) {
@@ -100,5 +104,19 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.ManagedObject', {
 	detach: function() {
 		this.getDom().detach();
 	},
+	
+	addBinding: function(sPropertyName, sSelector) {
+		var oBinding = com.nysoft.nyas.core.Model.addBinding(this, sPropertyName, sSelector);
+		this.getBindings()[sPropertyName] = oBinding;
+	},
+	
+	removeBinding: function(sPropertyName) {
+		delete this.getBindings()[sPropertyName];
+		//TODO: Remove also from model
+	},
+	
+	getBinding: function(sPropertyName) {
+		return this.getBindings()[sPropertyName];
+	}
 	
 });

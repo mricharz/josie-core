@@ -26,6 +26,7 @@ com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Model', {
 	},
 	
 	_loadData: function() {
+		this.trigger('onBeforeLoadingData', this, arguments);
 		if(!this._loadedOnce) {
 			this._loadedOnce = true;
 		}
@@ -33,10 +34,12 @@ com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Model', {
 	},
 	
 	_updateBindings: function(bForceRerender) {
+		this.trigger('onBeforeUpdatingBindings', this, arguments);
 		jQuery.log.trace('Updating bindings. With rerender: '+bForceRerender);
 		jQuery.each(this.getBindings(), jQuery.proxy(function(iIndex, oBinding) {
 			this._updateBinding(oBinding, bForceRerender);
 		}, this));
+		this.trigger('onAfterUpdatingBindings', this, arguments);
 	},
 	
 	getData: function() {
@@ -86,6 +89,7 @@ com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Model', {
 		jQuery.log.trace('Added new binding', oBinding);
 		//update this binding
 		this._updateBinding(oBinding, false);
+		return oBinding;
 	},
 	
 	getBinding: function(oObject, sPropertyName) {
@@ -122,7 +126,7 @@ com.nysoft.nyas.core.Model.addBinding = function(oObject, sPropertyName, sSelect
 	} 
 	var oModel = com.nysoft.nyas.core.Model.getModel(sModelKey);
 	if(oModel) {
-		oModel.addBinding(oObject, sPropertyName, sSelector);
+		return oModel.addBinding(oObject, sPropertyName, sSelector);
 	} else {
 		throw new com.nysoft.nyas.core.Exception('Cannot bind property "'+sPropertyName+'"! Model "'+sModelKey+'" not found!');
 	}
