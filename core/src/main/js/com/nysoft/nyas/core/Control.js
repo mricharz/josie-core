@@ -37,7 +37,8 @@ com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.Control', 'onAfterIni
 com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Control', {
 	
 	meta: {
-		id: 'string'
+		id: 'string',
+		visible: 'boolean'
 	},
 	
 	init: function() {},
@@ -46,6 +47,10 @@ com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Control', {
 		if(this.getDom()) {
 			//set id to dom-Element
 			this.getDom().attr('id', this.getId());
+			//is visible?
+			if(this.getVisible() === false) {
+				this.getDom().hide();
+			}
 		}
 	},
 	

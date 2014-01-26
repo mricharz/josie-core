@@ -13,7 +13,6 @@ com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.ManagedObject', 'onBe
 		oControlObject.setDom(domObject);
 		// capture object properties
 		var properties = domObject.data();
-		jQuery.log.trace('Walk through properties', properties);
 		jQuery.each(properties, function(sPropertyName, sValue) {
 			if(sPropertyName == "class") { // skip class-property
 				return true;
@@ -26,11 +25,10 @@ com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.ManagedObject', 'onBe
 			if(sValue && sValue.match) {
 				var aMatches = sValue.match(/^\{(\".*\")\}$/);
 				if(aMatches && aMatches.length == 2) {
-					//enrich shot-hand selector
+					//enrich short-hand selector
 					sValue = '{"selector":'+aMatches[1]+'}';
 				}
 			}
-			jQuery.log.trace('enrich object propertie: '+propertyName, sValue);
 			try { //try to parse as JSON-Data and set as property-value
 				value = jQuery.parseJSON(sValue);
 				jQuery.log.trace('Parsed as JSON');
@@ -40,26 +38,35 @@ com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.ManagedObject', 'onBe
 					oControlObject.addBinding(propertyName, value.selector);
 				}
 			} catch (err) { //otherwise look for binding selector
-				jQuery.log.trace('Parsed as string-value', err);
+				jQuery.log.trace('Parsed as string-value');
 				value = sValue;
 			}
 			options[propertyName] = value;
 		});
 		//aggregate content
-		var jqAggregations = domObject.children('*[data-parent-aggregation]');
+		var jqAggregations = domObject.children('*[data-property]');
 		var oAggregations = {};
 		jqAggregations.each(function(){
-			var sAggregation = this.data('data-parent-aggregation');
-			var oObject = this.generateObject();
+			var jqThis = jQuery(this);
+			var sAggregation = jqThis.data('property');
+			//create aggregation array
 			if(!oAggregations[sAggregation]) {
 				oAggregations[sAggregation] = [];
 			}
-			oAggregations[sAggregation].push(oObject);
+			//is this a object, then generate it
+			if(jqThis.data('data-class')) {
+				var oObject = jqThis.generateObject();
+				oAggregations[sAggregation].push(oObject);
+			} else { //id this only a container, then generate its content
+				oAggregations[sAggregation] = oAggregations[sAggregation].concat(jqThis.children().generateObject());
+			}
 		});
-		//TODO: maybe we need to add the objects into a AggregationObject and add this AggregationObject into the options
 		options = jQuery.extend(options, oAggregations);
 		//aggregate to default "content" for content without aggregation
-		options.content = domObject.children(':not([data-parent-aggregation])[data-class]').generateObject();
+		var aContentObjects = domObject.children(':not([data-property])[data-class]').generateObject();
+		if(aContentObjects.length) {
+			options.content = (options.content) ? options.content.concat(aContentObjects) : aContentObjects;
+		}
 		//clear content
 		domObject.empty();
 	} else {
