@@ -226,6 +226,38 @@ The binding gets automatically loaded and the control gets automatically updated
 You can use normal CSS3 Selectors to select data from your datamodel.
 For more information see: http://jsonselect.org/
 
+
+HTML-Decleration
+----------------
+
+You can create an Object-Tree in Html. Just create objects with a normal div-Tag and add data-Attributes as Object-Properties.
+
+```
+<div data-class="foo.bar.Foobar" data-foo="bar"></div>
+```
+
+You can also use databinding (see section above)
+
+### Aggregations
+
+You can aggregate child objects to specific properties or to the default property _content_
+
+```
+<div data-class="foo.bar.Foobar" data-foo="bar">
+
+  <!-- This objects gets aggregated into the parent object's property: content -->
+  <div data-class="foo.bar.SubFooBar" data-foo="I am content"></div>
+  <div data-class="foo.bar.SubFooBar" data-foo="I am content 2"></div>
+  
+  <div data-property="subs">
+    <!-- This objects gets aggregated into the parent object's property: subs -->
+    <div data-class="foo.bar.SubFooBar" data-foo="I am sub"></div>
+    <div data-class="foo.bar.SubFooBar" data-foo="I am sub 2"></div>
+  </div>
+  
+</div>
+```
+
 Logging:
 --------
 
