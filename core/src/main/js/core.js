@@ -252,9 +252,9 @@ jQuery.fn.generateObject = function (domObject) {
     domObject = (jQuery(this).length) ? jQuery(this) : jQuery(domObject);
     if(domObject)
         domObject.each(function () {
-            //Check if Object already exsist
             var t = jQuery(this);
-            if (!t.data("object")) {
+            //Check if Object already exsist
+            if (!t.data("control")) {
             	var className = t.data('class'),
             		options = t.data();
                 //Check if ClassName is defined
@@ -322,6 +322,6 @@ window.addEventListener("orientationchange", function() {
 });
 
 jQuery(document).ready(function() {
-	// Autodetect Class Pattern
-	jQuery("body [data-class]").generateObject();
+	// Autodetect Class Pattern (only first-level of data-class-Objects)
+	jQuery("[data-class]").not('[data-class] [data-class]').generateObject();
 });

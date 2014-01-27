@@ -65,6 +65,7 @@ com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.ManagedObject', 'onBe
 		//aggregate to default "content" for content without aggregation
 		var aContentObjects = domObject.children(':not([data-property])[data-class]').generateObject();
 		if(aContentObjects.length) {
+			jQuery.log.debug('Found default content-aggregation.', aContentObjects);
 			options.content = (options.content) ? options.content.concat(aContentObjects) : aContentObjects;
 		}
 		//clear content
@@ -73,6 +74,16 @@ com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.ManagedObject', 'onBe
 		oControlObject.setDom(jQuery('<div />'));
 	}
 	oControlObject.setProperties(options);
+});
+
+//onAfterInit
+com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.Control', 'onAfterInit', function(e, data) {
+	var oControlObject = e[0], arguments = e[1], domObject, options;
+	domObject = arguments[0] || null;
+	options = arguments[1] || null;
+	
+	//make dom-reference
+	oControlObject._setReference();
 });
 
 com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.ManagedObject', {
@@ -86,11 +97,6 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.ManagedObject', {
 		if(domObject && domObject.detach) {
 			domObject.detach();
 		}
-	},
-	
-	_setReference: function(domObject) {
-		domObject = domObject || this.getDom();
-		domObject.data('control', this);
 	},
 	
 	destroy: function() {
@@ -124,6 +130,11 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.ManagedObject', {
 	
 	getBinding: function(sPropertyName) {
 		return this.getBindings()[sPropertyName];
-	}
+	},
+	
+	_setReference: function(domObject) {
+		domObject = domObject || this.getDom();
+		domObject.data('control', this);
+	},
 	
 });

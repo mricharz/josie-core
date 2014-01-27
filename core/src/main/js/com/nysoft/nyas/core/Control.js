@@ -18,18 +18,8 @@ com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.Control', 'onAfterIni
 	oControlObject.trigger('onBeforeRenderer');
 	oControlObject._renderControl();
 
-	//make dom-reference
-	oControlObject._setReference();
-	
 	//update all properties to force rendering
-	var aProperties = oControlObject.getProperties();
-	jQuery.each(aProperties, function(key, value) {
-		var setter = 'set'+jQuery.utils.capitalize(key.slice(1));
-		if(oControlObject[setter]) {
-			jQuery.log.trace('Call '+setter, value);
-			oControlObject[setter].call(oControlObject, value);
-		}
-	});
+	oControlObject._forceUpdateProperties();
 	oControlObject.trigger('onAfterRenderer');
 	
 });
@@ -54,9 +44,24 @@ com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Control', {
 		}
 	},
 	
-	rerender: function() {
+	_forceUpdateProperties: function() {
+		var aProperties = this.getProperties();
+		jQuery.each(aProperties, jQuery.proxy(function(key, value) {
+			var setter = 'set'+jQuery.utils.capitalize(key.slice(1));
+			if(this[setter]) {
+				jQuery.log.trace('Call '+setter, value);
+				this[setter].call(this, value);
+			}
+		}, this));
+	},
+	
+	rerender: function(bWithoutUpdateProperties) {
+		this.trigger('onBeforeRenderer');
 		this.getDom().empty();
 		this._renderControl();
-	}
+		if(!bWithoutUpdateProperties)
+			this._forceUpdateProperties();
+		this.trigger('onAfterRenderer');
+	}	
 	
 });
