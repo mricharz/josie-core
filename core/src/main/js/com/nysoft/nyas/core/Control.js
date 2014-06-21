@@ -62,6 +62,17 @@ com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Control', {
 		if(!bWithoutUpdateProperties)
 			this._forceUpdateProperties();
 		this.trigger('onAfterRenderer');
-	}	
+	},
+	
+	invalidate: function() {
+		jQuery.log.debug('Invalidating '+this.className);
+		if(this.__valid !== false) {
+	  		this.__valid = false;
+			setTimeout(jQuery.proxy(function() {
+	   			this.__valid = true;
+				this.rerender();
+			}, this), 0);
+		}
+	}
 	
 });

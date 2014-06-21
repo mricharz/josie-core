@@ -62,10 +62,10 @@ com.nysoft.nyas.core.BaseObject.extend = function (className, classDescObject) {
 
     //Declare class
     base[className] = jQuery.extend(function () {
-        this.aProperties = {};
+        this.aProperties = jQuery.extend({}, this.aDefaultProperties);
         
         this.setProperty = function (key, value) {
-            this.aProperties['_'+key] = value;
+            this.aProperties[key] = value;
         };
         
         this.setProperties = function(properties) {
@@ -77,7 +77,7 @@ com.nysoft.nyas.core.BaseObject.extend = function (className, classDescObject) {
         };
     
         this.getProperty = function (key) {
-            return this.aProperties['_'+key];
+            return this.aProperties[key];
         };
         
         this.getProperties = function() {
@@ -89,12 +89,36 @@ com.nysoft.nyas.core.BaseObject.extend = function (className, classDescObject) {
         		var args = [];
         	    Array.prototype.push.apply(args, arguments);
         		var methodName = args.shift();
-        		if(typeof this.$parent[methodName] == 'function') {
-        			var method = this.$parent[methodName];
-		        	var tmpParent = this.$parent;
-		        	this.$parent = this.$parent.$parent;
+        		//generate parent-stack if not exists
+        		if(!this.__$translateParent) {
+        			this.__$translateParent = [];
+        		}
+        		//find method in parent
+        		function lookBackStack(method, arr, index) {
+        			if(index === undefined) {
+        				index = arr.length-1;
+        			}
+        			if(index < 0) {
+        				return;
+        			}
+        			if(arr[index][method]) {
+        				return arr[index][method];
+        			}
+        			return lookBackStack(method, arr, index-1);
+        		}
+        		//search in old parent-object for this method and use this instead
+        		var method = lookBackStack(methodName, this.__$translateParent) || this.$parent[methodName];
+        		if(typeof method == 'function') {
+        			//push current parent into parent-stack
+		        	this.__$translateParent.push(this.$parent);
+		        	//only translate parent if there is another parent
+		        	if(this.$parent.$parent) {
+		        		this.$parent = this.$parent.$parent;
+		        	}
+		        	//call super-method
 	        		var result = method.apply(this, args);
-		        	this.$parent = tmpParent;
+	        		//revert parent to it's initial state
+		        	this.$parent = this.__$translateParent.pop();
 		        	return result;
         		} else {
         			throw new com.nysoft.nyas.core.Exception(methodName+' is not a function!');
@@ -105,43 +129,54 @@ com.nysoft.nyas.core.BaseObject.extend = function (className, classDescObject) {
         };
         
         this.bindEvent = function(sEventName, fEventHandlerFunction, oData) {
-        	this.getEventStack().bind(this ,sEventName, fEventHandlerFunction, this, oData);
+        	com.nysoft.nyas.core.EventStack.bind(this ,sEventName, fEventHandlerFunction, this, oData);
         };
         
         this.unbindEvent = function(sEventName) {
-        	this.getEventStack().unbind(this, sEventName);
+        	com.nysoft.nyas.core.EventStack.unbind(this, sEventName);
         };
         
         this.trigger = function() {
         	var args = [];
     		Array.prototype.push.apply(args, arguments);
     		args.unshift(this);
-        	this.getEventStack().trigger.apply(this.getEventStack(), args);
+    		com.nysoft.nyas.core.EventStack.trigger.apply(com.nysoft.nyas.core.EventStack, args);
         };
         
     	this.getEventStack = function() {
     		return com.nysoft.nyas.core.EventStack;
     	};
         
+    	this.trigger('onBeforeInit', this, arguments);
         if(!init && this.init) {
-        	this.trigger('onBeforeInit', this, arguments);
             this.init.apply(this, arguments);
-            this.trigger('onAfterInit', this, arguments);
         }
+        this.trigger('onAfterInit', this, arguments);
     }, base[className]);
     //abstract this
     init = true;
     base[className].prototype = new this();
     base[className].prototype.$parent = new this();
     base[className].prototype.className = nameSpace+'.'+className;
+    if(!base[className].prototype.aDefaultProperties) {
+    	base[className].prototype.aDefaultProperties = {};
+    }
     init = false;
     base[className].extend = this.extend;
     base[className].parseMetadata = this.parseMetadata;
 
     this.parseMetadata = function (metadata) {
         jQuery.each(metadata, function (key, type) {
+        	var defaultValue = null;
+        	if(jQuery.isPlainObject(type)) {
+        		defaultValue = type.defaultValue;
+        		type = type.type;
+        	}
             type = (type) ? type.toLowerCase() : type;
             var name = jQuery.utils.capitalize(key);
+            
+            //set defaultValue
+            base[className].prototype.aDefaultProperties[name] = defaultValue;
 
             //prototyping setter (with validation)
             base[className].prototype['set' + name] = function (value) {

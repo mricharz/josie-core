@@ -36,7 +36,8 @@ com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Model', {
 	_updateBindings: function(bForceRerender) {
 		this.trigger('onBeforeUpdatingBindings', this, arguments);
 		jQuery.log.trace('Updating bindings. With rerender: '+bForceRerender);
-		jQuery.each(this.getBindings(), jQuery.proxy(function(iIndex, oBinding) {
+		var aBindings = this.getBindings();
+		jQuery.each(aBindings, jQuery.proxy(function(iIndex, oBinding) {
 			this._updateBinding(oBinding, bForceRerender);
 		}, this));
 		this.trigger('onAfterUpdatingBindings', this, arguments);
@@ -57,14 +58,19 @@ com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Model', {
 	},
 	
 	_updateBinding: function(oBinding, bForceRerender) {
-		jQuery.log.trace('Updating binding', oBinding);
+		jQuery.log.trace('Updating binding', oBinding, bForceRerender);
 		//get value of selector
 		var oValue = this._evaluateSelector(oBinding.selector);
 		//set object attribute value
 		oBinding.object.setProperty(oBinding.property, oValue);
 		//rerender if forced and possible
-		if(bForceRerender && jQuery.isFunction(oBinding.object.rerender)) {
-			oBinding.object.rerender();
+		if(bForceRerender) {
+			if(jQuery.isFunction(oBinding.object.invalidate)) {
+				oBinding.object.invalidate(); //just invalidate if possible (recommended)
+			}
+			else if(jQuery.isFunction(oBinding.object.rerender)) {
+				oBinding.object.rerender();
+			}
 		}
 	},
 	
@@ -87,7 +93,7 @@ com.nysoft.nyas.core.ManagedObject.extend('com.nysoft.nyas.core.Model', {
 		//save binding in model
 		this.getBindings().push(oBinding);
 		jQuery.log.trace('Added new binding', oBinding);
-		//update this binding
+		//update this binding (without rerender)
 		this._updateBinding(oBinding, false);
 		return oBinding;
 	},
