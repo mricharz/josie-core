@@ -54,14 +54,29 @@ this._super('init', argument1, argument2, ...);
 ```
 But this will throw an exception if the method not exists in super-class.
 
-### Getter, Setter and Validation
+### Getter, Setter, DefaultValue and Validation
 
-You can use _meta_-Property to autogenerate getter and setter methods with type validation:
+You can use _meta_-Property to autogenerate getter and setter methods with defaultValue and type-validation:
 ```javascript
 com.nysoft.nyas.core.BaseObject.extend('foo.bar.Foobar', {
   meta: {
+  
     foo: 'number',
-    bar: 'string'
+    
+    bar: 'string',
+    
+    foo2: {
+      type: 'boolean',
+      defaultValue: true
+    },
+    
+    bar2: {
+      type: 'object',
+      defaultValue: {
+        some: 'thing'
+      }
+    }
+    
     /*
     possible types:
       number
