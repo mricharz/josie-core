@@ -176,7 +176,7 @@ com.nysoft.nyas.core.BaseObject.extend = function (className, classDescObject) {
             var name = jQuery.utils.capitalize(key);
             
             //set defaultValue
-            base[className].prototype.aDefaultProperties[name] = defaultValue;
+            base[className].prototype.aDefaultProperties[key] = defaultValue;
 
             //prototyping setter (with validation)
             base[className].prototype['set' + name] = function (value) {

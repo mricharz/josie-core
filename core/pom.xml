@@ -5,7 +5,7 @@
 
 	<groupId>com.nysoft.nyas</groupId>
 	<artifactId>core</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>Simple JavaScript Framework</name>
 	<packaging>jar</packaging>
 	<description>This is a simple and small OOP framework based on jQuery</description>
