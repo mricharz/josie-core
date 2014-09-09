@@ -1,7 +1,7 @@
-Simple-JavaScript-Framework
+Josie-Framework
 ===========================
 
-This is a simple and small OOP framework based on jQuery.
+This is a simple OOP framework based on jQuery.
 Makes JavaScript more _Java_ than _Script_.
 
 
@@ -23,7 +23,7 @@ Classes:
 
 To create Classes, extend the BaseObject:
 ```javascript
-com.nysoft.nyas.core.BaseObject.extend('foo.bar.Foobar', {});
+com.nysoft.josie.core.BaseObject.extend('foo.bar.Foobar', {});
 ```
 this will create a new Class named _Foobar_ in namespace _foo.bar_
 
@@ -36,7 +36,7 @@ new foo.bar.Foobar();
 
 you can implement a constructor by adding a method named _init_:
 ```javascript
-com.nysoft.nyas.core.BaseObject.extend('foo.bar.Foobar', {
+com.nysoft.josie.core.BaseObject.extend('foo.bar.Foobar', {
   init: function() {
     alert(arguments[0]); //arguments are the constructor parameters
   }
@@ -58,7 +58,7 @@ But this will throw an exception if the method not exists in super-class.
 
 You can use _meta_-Property to autogenerate getter and setter methods with defaultValue and type-validation:
 ```javascript
-com.nysoft.nyas.core.BaseObject.extend('foo.bar.Foobar', {
+com.nysoft.josie.core.BaseObject.extend('foo.bar.Foobar', {
   meta: {
   
     foo: 'number',
@@ -125,18 +125,18 @@ But for Object-Events there is an EventStack-Class.
 You can set a global eventHandler to a Class. If this event gets executed, each object of this class is affected.
 ```javascript
 //Create Class
-com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Control', {
+com.nysoft.josie.core.BaseObject.extend('com.nysoft.josie.core.Control', {
   init: function() {
     alert('world');
   }
 });
 
 //Bind global Class-event
-com.nysoft.nyas.core.EventStack.bind('com.nysoft.nyas.core.Control', 'onAfterInit', function(e, data) {
+com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.Control', 'onAfterInit', function(e, data) {
   alert('hello');
 });
 
-var oControl = new com.nysoft.nyas.core.Control();
+var oControl = new com.nysoft.josie.core.Control();
 ```
 _This will alert "hello" after init-Method of each Control-Object is called._
 
@@ -145,7 +145,7 @@ _This will alert "hello" after init-Method of each Control-Object is called._
 You can also set an object eventHandler. If this event gets executed only this one object is affected.
 
 ```javascript
-com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Control', {
+com.nysoft.josie.core.BaseObject.extend('com.nysoft.josie.core.Control', {
   init: function() {
     alert('world');
   },
@@ -154,7 +154,7 @@ com.nysoft.nyas.core.BaseObject.extend('com.nysoft.nyas.core.Control', {
     this.trigger('onFoo');
   }
 });
-var oControl = new com.nysoft.nyas.core.Control();
+var oControl = new com.nysoft.josie.core.Control();
 
 oControl.bindEvent('onFoo', function() {
   alert('bar');
@@ -170,7 +170,7 @@ To unbind event just use:
 ```javascript
 this.unbind('onFoo');
 // or
-com.nysoft.nyas.core.EventStack.unbind('com.nysoft.nyas.core.Control', 'onAfterInit');
+com.nysoft.josie.core.EventStack.unbind('com.nysoft.josie.core.Control', 'onAfterInit');
 ```
 
 ### Break Event execution:
@@ -198,7 +198,7 @@ Databinding:
 
 You can create a Datamodel with:
 ```javascript
-var oModel = new com.nysoft.nyas.core.Model.JSONModel({
+var oModel = new com.nysoft.josie.core.Model.JSONModel({
   src: '/url/to/json',
   key: 'modelKey' // optional. useful if you have more than one datamodel.
 });
@@ -207,7 +207,7 @@ var oModel = new com.nysoft.nyas.core.Model.JSONModel({
 or with:
 
 ```html
-<div data-class="com.nysoft.nyas.core.Model.JSONModel" data-src="/admin/cache/listCaches"></div>
+<div data-class="com.nysoft.josie.core.Model.JSONModel" data-src="/admin/cache/listCaches"></div>
 ```
 
 ### Binding Data
@@ -232,7 +232,7 @@ Your json-data is something like this:
 
 */
 
-new com.nysoft.nyas.ui.Button({
+new com.nysoft.josie.ui.Button({
   text: '{".data .text:first-child"}'
 });
 ```
@@ -303,7 +303,7 @@ DOM Class Pattern:
 
 You can split Javascript and HTML by using Class Pattern.
 ```javascript
-<div data-class="com.nysoft.nyas.ui.Button" data-text="FooBar"></div>
+<div data-class="com.nysoft.josie.ui.Button" data-text="FooBar"></div>
 ```
 _This will generate a Button onto this DOM-Element._
 
