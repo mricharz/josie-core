@@ -1,4 +1,11 @@
 #################
+## Node.JS
+#################
+
+node_modules/
+target/
+
+#################
 ## Eclipse
 #################
 
@@ -27,16 +34,6 @@ local.properties
 
 # PDT-specific
 .buildpath
-
-# Maven
-core/target/classes/
-core/target/maven-archiver/
-core/target/surefire/
-
-ui/target/classes/
-ui/target/maven-archiver/
-ui/target/surefire/
-ui/target/css/
 
 
 #################
