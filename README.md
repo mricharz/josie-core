@@ -4,6 +4,8 @@ Josie-Framework
 This is a simple OOP framework based on jQuery.
 Makes JavaScript more _Java_ than _Script_.
 
+[![Build Status](https://travis-ci.org/mricharz/josie-core.svg?branch=master)](https://travis-ci.org/mricharz/josie-core)
+
 
 Namespaces:
 -----------
