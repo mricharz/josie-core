@@ -2,7 +2,8 @@ var argv = require('yargs').argv,
 	gulp = require('gulp'),
 	uglify = require('gulp-uglifyjs'),
 	clean = require('gulp-rimraf'),
-	sSrc = 'src/**/*',
+	foreach = require('gulp-foreach'),
+	sSrc = 'src/**/*.*',
 	sTarget = 'target';
 
 gulp.task('default',['clean'], function(){
@@ -16,11 +17,13 @@ gulp.task('default',['clean'], function(){
 			outSourceMap: true
 		};
 	
-	return oSrc.pipe(uglify(oUglifyOptions));
+	return oSrc.pipe(foreach(function(stream, file) {
+			return stream.pipe(uglify(oUglifyOptions));
+		}))
 		.pipe(gulp.dest(sTarget));
 });
 
 gulp.task('clean', function(){
 	return gulp.src(sTarget)
-		.pipe(clean())
+		.pipe(clean());
 });
