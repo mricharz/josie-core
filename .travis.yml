@@ -5,6 +5,13 @@ node_js:
 before_script:
 - npm install -g gulp
 script: gulp
+notifications:
+  email:
+    recipients:
+      - manuel.richarz@nysoft.de
+      - viktor.zener@gmail.com
+    on_success: change
+    on_failure: always
 deploy:
   provider: releases
   api_key:

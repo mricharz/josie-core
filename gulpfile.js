@@ -5,8 +5,10 @@ var argv = require('yargs').argv,
 	foreach = require('gulp-foreach'),
 	tar = require('gulp-tar'),
 	gzip = require('gulp-gzip'),
+	run = require('run-sequence'),
 	sSrc = './src/**/*.*',
-	sTarget = './target';
+	sTarget = './target',
+	sPackageName = 'josie-core.tar';
 
 /**
  * Uglify Source and move into Target-Directory
@@ -47,8 +49,8 @@ gulp.task('package', function() {
 		}
 	};
 	
-	return gulp.src(sTarget+'/src')
-		.pipe(tar())
+	return gulp.src(sTarget+'/src/**/*.*')
+		.pipe(tar(sPackageName))
 		.pipe(gzip(oGzipOptions))
 		.pipe(gulp.dest(sTarget));
 });
@@ -56,9 +58,24 @@ gulp.task('package', function() {
 /**
  * Install task (just uglify into target; good for development)
  */
-gulp.task('install', ['clean', 'uglify']);
+gulp.task('install', function(cb) {
+	 run(
+	 	'clean',
+	 	'uglify',
+      	cb
+	 );
+
+});
 
 /**
  * Default Build Task
  */
-gulp.task('default', ['install', 'package']);
+gulp.task('default', function(cb) {
+	 run(
+		'clean',
+	 	'uglify',
+     	'package',
+      	cb
+	 );
+
+});
