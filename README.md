@@ -6,6 +6,8 @@ Makes JavaScript more _Java_ than _Script_.
 
 [![Build Status](https://travis-ci.org/mricharz/josie-core.svg?branch=master)](https://travis-ci.org/mricharz/josie-core)
 
+Download [latest release](https://github.com/mricharz/josie-core/releases/latest "Download latest release version").
+
 
 Namespaces:
 -----------
@@ -326,13 +328,12 @@ If there is any error/bug with some jquery version, please tell me or feel free 
 Usage:
 ------
 
-To get this framework into your project you can download the jar-Files of [core](https://github.com/mricharz/Simple-JavaScript-Framework/blob/master/core/target/core-0.0.1-SNAPSHOT.jar "Core-Library") and [ui](https://github.com/mricharz/Simple-JavaScript-Framework/blob/master/ui/target/ui-0.0.1-SNAPSHOT.jar "UI-Library") and load it inside of your project.
-Or you can checkout the repo and import both projects _core_ and _ui_ to your IDE and add dependencies in your maven-project.
+To get this framework into your project you can download the [latest release](https://github.com/mricharz/josie-core/releases/latest "Download latest release version") and add it to your project.
 
 To init the library, you only have to add this to your HTML-Head:
 ```html
 //Before this line you need to load jQuery-Library!
-<script type="text/javascript" src="/core.js"></script>
+<script type="text/javascript" src="/js/core.js"></script>
 ```
 
 License:
