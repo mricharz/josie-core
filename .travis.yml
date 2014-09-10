@@ -19,3 +19,5 @@ deploy:
   file: target/josie-core.zip
   on:
     repo: mricharz/josie-core
+    tags: true
+    all_branches: true
