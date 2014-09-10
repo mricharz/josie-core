@@ -1,7 +1,14 @@
 language: node_js
 node_js:
-  - "0.11"
-  - "0.10"
+- '0.11'
+- '0.10'
 before_script:
-  - npm install -g gulp
+- npm install -g gulp
 script: gulp
+deploy:
+  provider: releases
+  api_key:
+    secure: IEzkfxK1fxvGECC2QFqTqvOY7hQWOr0sBG7Tr8OpFeiS7D8gf66rMPUIviUGdbcOEiNWrO2UBoY1FZft89kZrNnaNLtPXr4BY5YRw3L0Y/mRNRXneaS7L657vFF02NNioDQkyRX+8vk7syvgAS0MeSAcqVkEgveoanuJm5TGytI=
+  file: target/josie-core.zip
+  on:
+    repo: mricharz/josie-core
