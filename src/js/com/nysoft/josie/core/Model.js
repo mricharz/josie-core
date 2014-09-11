@@ -9,7 +9,7 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Model', {
 		key: { type: 'string', defaultValue: 'default' }
 	},
 	
-	init: function(domObject, options) {
+	init: function(domObject) {
 		this._super('init', domObject);
 		//reference model instance
 		jQuery.log.trace('Referencing Model: '+this.getKey());
