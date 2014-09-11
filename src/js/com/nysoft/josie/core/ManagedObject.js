@@ -92,7 +92,7 @@ com.nysoft.josie.core.BaseObject.extend('com.nysoft.josie.core.ManagedObject', {
 		bindings: 'object'
 	},
 	
-	init: function(domObject, options) {
+	init: function(domObject) {
 		jQuery.log.trace('Init ManagedObject', arguments);
 		if(domObject && domObject.detach) {
 			domObject.detach();

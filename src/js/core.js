@@ -305,7 +305,7 @@ jQuery.requestAnimationFrame = (function() {
 	window.mozRequestAnimationFrame    || 
 	window.oRequestAnimationFrame      || 
 	window.msRequestAnimationFrame     || 
-	function(fCallback, domElement){
+	function(fCallback){
 		window.setTimeout(fCallback, 1000 / 60);
 	};
 })();
