@@ -5,7 +5,7 @@ var argv = require('yargs').argv,
 	foreach = require('gulp-foreach'),
 	tar = require('gulp-tar'),
 	gzip = require('gulp-gzip'),
-	run = require('run-sequence'),
+	runSequence = require('run-sequence'),
 	sSrc = './src/js/**/*.*',
 	sTarget = './target',
 	sPackageName = 'josie-core.tar';
@@ -59,7 +59,7 @@ gulp.task('package', function() {
  * Install task (just uglify into target; good for development)
  */
 gulp.task('install', function(cb) {
-	 run(
+	runSequence(
 	 	'clean',
 	 	'uglify',
       	cb
@@ -71,7 +71,7 @@ gulp.task('install', function(cb) {
  * Default Build Task
  */
 gulp.task('default', function(cb) {
-	 run(
+	runSequence(
 		'clean',
 	 	'uglify',
      	'package',

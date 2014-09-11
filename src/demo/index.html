@@ -7,29 +7,46 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- Place favicon.ico and apple-touch-icon(s) in the root directory -->
-
+		<!--
+			Loading jQuery
+		-->
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		
+		<!--
+			Loading josie-core
+		-->
         <script src="../js/core.js"></script>
+        
         <script>
-        	//Activate debug-logging
+        	// Activate debug-logging (have a look at your browser-console)
         	jQuery.log.setLevel(jQuery.log.level.All);
         	
+        	// load required core.Control
         	jQuery.require('com.nysoft.josie.core.Control');
         	
+        	// extend core.Control into demo.App
         	com.nysoft.josie.core.Control.extend('demo.App', {
+        		
         		meta: {
+        			// create property "content"
         			content: 'string'
         		},
         		
         		_renderControl: function() {
+        			// call _renderControl of parentClass
         			this._super('_renderControl', arguments);
+        			
+        			// set content into domObject
         			this.getDom().append(this.getContent());
         		}
+        		
         	});
         </script>
     </head>
     <body>
+    	<!-- 
+    		Instanciate demo.App via HTML-Decleration
+   		-->
     	<div data-class="demo.App" data-content="It works!"></div>
     </body>
 </html>
