@@ -1,3 +1,12 @@
+//Detect last script source
+jQuery._detectLastScriptPath = function() {
+	var scripts = document.getElementsByTagName('script');
+	return scripts[scripts.length-1].src;
+};
+//detect own scriptPath
+jQuery.josieBasePath = jQuery._detectLastScriptPath().replace(/\/[^/]*?core\.[^js]*?js.*$/, '/');
+jQuery.josieLocalRun = jQuery.josieBasePath.match(/^file:\/\//) ? true : false;
+
 //Logging
 jQuery.log = {
 		_getTimestamp: function() {
@@ -69,7 +78,7 @@ jQuery.log = {
 				this._writeWarn.apply(this, arguments);
 			}
 		},
-		
+
 		error: function() {
 			if(jQuery.log.logLevel >= 1) {
 				this._writeError.apply(this, arguments);
@@ -90,6 +99,9 @@ jQuery.log = {
 			All: 6
 		}
 };
+//add aliases
+jQuery.log.err = jQuery.log.error;
+jQuery.log.warn = jQuery.log.warning;
 
 //Some utils
 jQuery.utils = {
@@ -171,6 +183,7 @@ jQuery.utils = {
 		return value.charAt(0).toUpperCase() + value.slice(1);
 	},
 	
+	//convert HTML-attributes like "data-foo-bar" into a camelCase-variant like "DataFooBar"
 	htmlAttr2CamelCase: function(attrName) {
 		return attrName.replace(/-(.)/g, function(m, p1) { 
             return p1.toUpperCase(); 
@@ -206,17 +219,15 @@ jQuery.declare = function(namespace, base) {
     return base;
 };
 
-jQuery.requireRoot = "/";
-
 //Lazyloading
 //TODO: Refactor this!
 jQuery.require = function(className, options) {
 	if(!className) return;
 	if(jQuery.utils.isNamespace(className)) {
 		//check if class already exists
-		if(window[className]) return;
+		if(window[className] !== undefined) return;
 		//convert className into path
-		className = jQuery.requireRoot + className.replace(/\./g, '/')+'.js';
+		className = jQuery.josieBasePath + className.replace(/\./g, '/')+'.js';
 	}
 	options = jQuery.extend({
 		async: false,
@@ -230,7 +241,10 @@ jQuery.require = function(className, options) {
 		jQuery._resources = [];
 	}
 	//check if resource is already loaded
-	for(p=0;p<jQuery._resources.length;p++) if (className === jQuery._resources[p]) return;
+	for(var p = 0; p < jQuery._resources.length; p++) {
+		if (className === jQuery._resources[p])
+			return;
+	}
 	//load it
 	if(options.dataType == 'stylesheet') {
 		jQuery.loadCSS(options.url);
@@ -322,6 +336,12 @@ window.addEventListener("orientationchange", function() {
 });
 
 jQuery(document).ready(function() {
+	jQuery.log.debug('Josie-Core BasePath:', jQuery.josieBasePath);
+	if(jQuery.josieLocalRun) {
+		jQuery.log.warn('Josie-Core is running locally. You may have problems loading local files over "file://".');
+		jQuery.log.info('OPTION 1: You can view this page through "http://localhost" instead of open it as "file://"');
+		jQuery.log.info('OPTION 2: Or you can start your browser with deactivated security-rules.');
+	}
 	// Autodetect Class Pattern (only first-level of data-class-Objects)
 	jQuery("[data-class]").not('[data-class] [data-class]').generateObject();
 });

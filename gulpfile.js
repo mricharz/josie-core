@@ -6,7 +6,7 @@ var argv = require('yargs').argv,
 	tar = require('gulp-tar'),
 	gzip = require('gulp-gzip'),
 	run = require('run-sequence'),
-	sSrc = './src/**/*.*',
+	sSrc = './src/js/**/*.*',
 	sTarget = './target',
 	sPackageName = 'josie-core.tar';
 
