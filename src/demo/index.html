@@ -14,9 +14,22 @@
         <script>
         	//Activate debug-logging
         	jQuery.log.setLevel(jQuery.log.level.All);
+        	
+        	jQuery.require('com.nysoft.josie.core.Control');
+        	
+        	com.nysoft.josie.core.Control.extend('demo.App', {
+        		meta: {
+        			content: 'string'
+        		},
+        		
+        		_renderControl: function() {
+        			this._super('_renderControl', arguments);
+        			this.getDom().append(this.getContent());
+        		}
+        	});
         </script>
     </head>
     <body>
-    	<div data-class="com.nysoft.josie.core.Control" data-content="It works!"></div>
+    	<div data-class="demo.App" data-content="It works!"></div>
     </body>
 </html>
