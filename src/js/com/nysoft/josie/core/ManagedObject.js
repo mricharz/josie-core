@@ -6,9 +6,6 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
 	domObject = arguments[0] || null;
 	options = arguments[1] || null;
 	
-	//init binding because we need them soon
-	oControlObject.setBindings({});
-	
 	if (domObject) {
 		oControlObject.setDom(domObject);
 		// capture object properties
@@ -37,6 +34,8 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
 					jQuery.log.trace('has selector binding');
 					oControlObject.addBinding(propertyName, value.selector);
 				}
+				delete options[propertyName];
+				return true;
 			} catch (err) { //otherwise look for binding selector
 				jQuery.log.trace('Parsed as string-value');
 				value = sValue;
@@ -89,7 +88,7 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.Control', 'onAfterI
 com.nysoft.josie.core.BaseObject.extend('com.nysoft.josie.core.ManagedObject', {
 	meta: {
 		dom: 'object',
-		bindings: 'object'
+		bindings: { type: 'object', defaultValue: [] }
 	},
 	
 	init: function(domObject) {

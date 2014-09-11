@@ -1,12 +1,12 @@
 <!doctype html>
-<html class="no-js" lang="">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
+<html lang="">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Josie-Core - Demo App</title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
 		<!--
 			Loading jQuery
 		-->
@@ -15,38 +15,81 @@
 		<!--
 			Loading josie-core
 		-->
-        <script src="../js/core.js"></script>
-        
-        <script>
-        	// Activate debug-logging (have a look at your browser-console)
-        	jQuery.log.setLevel(jQuery.log.level.All);
-        	
-        	// load required core.Control
-        	jQuery.require('com.nysoft.josie.core.Control');
-        	
-        	// extend core.Control into demo.App
-        	com.nysoft.josie.core.Control.extend('demo.App', {
-        		
-        		meta: {
-        			// create property "content"
-        			content: 'string'
-        		},
-        		
-        		_renderControl: function() {
-        			// call _renderControl of parentClass
-        			this._super('_renderControl', arguments);
-        			
-        			// set content into domObject
-        			this.getDom().append(this.getContent());
-        		}
-        		
-        	});
-        </script>
-    </head>
-    <body>
-    	<!-- 
-    		Instanciate demo.App via HTML-Decleration
-   		-->
-    	<div data-class="demo.App" data-content="It works!"></div>
-    </body>
+		<script src="../js/core.js"></script>
+		
+		<script>
+		
+			// Activate debug-logging (have a look at your browser-console)
+			jQuery.log.setLevel(jQuery.log.level.All);
+			
+			
+			
+			// load required core.Model
+			jQuery.require('com.nysoft.josie.core.Model');
+			
+			// create a dataModel
+			var oDataModel = new com.nysoft.josie.core.Model(null, {
+				data: {
+					content: [
+							  "<strong style='color:red;'>\\o/ FAILED!</strong>",
+					          "<strong style='color:green;'>Test 2 passed</strong>",
+					          "<strong style='color:red;'>\\o/ FAILED!</strong>",
+					          "<strong style='color:red;'>\\o/ FAILED!</strong>",
+					          "<strong style='color:red;'>\\o/ FAILED!</strong>"
+					          ]
+				}
+			});
+			
+			
+			
+			// load required core.Control
+			jQuery.require('com.nysoft.josie.core.Control');
+			
+			// extend core.Control into demo.App
+			com.nysoft.josie.core.Control.extend('demo.App', {
+				
+				meta: {
+					// create property "content"
+					content: 'string'
+				},
+				
+				_renderControl: function() {
+					// call _renderControl of parentClass
+					this._super('_renderControl', arguments);
+					
+					// set content into domObject
+					this.getDom().html(this.getContent());
+				}
+				
+			});
+			
+		</script>
+	</head>
+	<body>
+		<!-- 
+			Instanciate demo.App via HTML-Decleration
+		-->
+		<div data-class="demo.App" data-content="<strong style='color:green;'>Test 1 passed</strong>">
+			<!--
+				Normal HTML-Content will be replaced by demo.App if it works.
+				This code will be visible if something went wrong!
+				
+				Check Browser-Console if this is visible in browser.
+			-->
+			<strong style="color:red;">Test 1 failed</strong>
+		</div>
+		
+		<!-- 
+			Instanciate demo.App via HTML-Decleration and Data-Binding
+		-->
+		<div data-class="demo.App" data-content='{".content :nth-child(2)"}'>
+			<!--
+				Normal HTML-Content will be replaced by demo.App if it works.
+				This code will be visible if something went wrong!
+				
+				Check Browser-Console if this is visible in browser.
+			-->
+			<strong style="color:red;">Test 2 failed</strong>
+		</div>
+	</body>
 </html>

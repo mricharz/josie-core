@@ -169,10 +169,10 @@ jQuery.utils = {
 	
 	isNamespace: function(sNamespace) {
 		var pattern = new RegExp('^([a-zA-Z0-9_-]*\\.?)*$', 'i');
-		if(!pattern.test(sNamespace)) {
-			return false;
+		if(pattern.test(sNamespace) && typeof sNamespace === 'string' && sNamespace != '') {
+			return true;
 		}
-		return true;
+		return false;
 	},
 	
 	getParameter: function(name) {
@@ -219,13 +219,36 @@ jQuery.declare = function(namespace, base) {
     return base;
 };
 
+jQuery.classExists = function(className) {
+	return (jQuery.getClass(className) !== undefined);
+};
+
+jQuery.getClass = function(className, base) {
+	if(base === undefined || base === null) {
+        base = window;
+    }
+	if(jQuery.utils.isNamespace(className) || (jQuery.isArray(className) && className.length)) {
+		var aScopes = jQuery.isArray(className) ? className : className.split('.'),
+			sFirstScope = aScopes.shift();
+		
+		if(base[sFirstScope] !== undefined) {
+			if(aScopes.length) {
+				return jQuery.getClass(aScopes, base[sFirstScope]);
+			}
+			return base[sFirstScope];
+		}
+		return undefined;
+	}
+	return base[className];
+};
+
 //Lazyloading
 //TODO: Refactor this!
 jQuery.require = function(className, options) {
 	if(!className) return;
 	if(jQuery.utils.isNamespace(className)) {
 		//check if class already exists
-		if(window[className] !== undefined) return;
+		if(jQuery.classExists(className)) return;
 		//convert className into path
 		className = jQuery.josieBasePath + className.replace(/\./g, '/')+'.js';
 	}

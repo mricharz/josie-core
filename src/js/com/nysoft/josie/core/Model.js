@@ -5,16 +5,12 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Model', {
 	
 	meta: {
 		data: 'object',
-		bindings: 'object',
-		key: 'string'
+		bindings: { type: 'object', defaultValue: [] },
+		key: { type: 'string', defaultValue: 'default' }
 	},
 	
 	init: function(domObject, options) {
-		this._super('init', domObject, options);
-		//setup model
-		this.setProperties(options);
-		//init bindings array to hold bindings
-		this.setBindings([]);
+		this._super('init', domObject);
 		//reference model instance
 		jQuery.log.trace('Referencing Model: '+this.getKey());
 		com.nysoft.josie.core.Model._models[this.getKey()] = this;
@@ -80,7 +76,12 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Model', {
 	},
 	
 	_evaluateSelector: function(oSelector) {
-		return oSelector.match(this.getData());
+		// try-catch because this is an external lib and i am a careful man \o/
+		try {
+			return oSelector.match(this.getData());
+		} catch(err) {
+			jQuery.log.error(err);
+		}
 	},
 	
 	addBinding: function(oObject, sPropertyName, sSelector) {
@@ -125,7 +126,7 @@ com.nysoft.josie.core.Model.getModels = function() {
 
 com.nysoft.josie.core.Model.addBinding = function(oObject, sPropertyName, sSelector) {
 	var aMatches = sSelector.match(/^(.*?);/);
-	var sModelKey;
+	var sModelKey = 'default';
 	if(aMatches && aMatches.length == 2) {
 		sModelKey = aMatches[1];
 		sSelector = sSelector.replace(aMatches[0], '');
