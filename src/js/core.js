@@ -7,6 +7,10 @@ jQuery._detectLastScriptPath = function() {
 jQuery.josieBasePath = jQuery._detectLastScriptPath().replace(/\/[^/]*?core\.[^js]*?js.*$/, '/');
 jQuery.josieLocalRun = jQuery.josieBasePath.match(/^file:\/\//) ? true : false;
 
+jQuery.version = {
+	'josie-core': '0.0.2'
+};
+
 //Logging
 jQuery.log = {
 		_getTimestamp: function() {
@@ -111,6 +115,10 @@ jQuery.utils = {
 	    return angle * .017453292519943295; //(angle / 180) * Math.PI;
 	},
 	
+	rad2deg: function(radiant) {
+		return radiant / .017453292519943295;
+	},
+	
 	//faster alternative for Math.round(value)
 	round: function(value) {
 	    return (0.5 + value) & 0xffff;	
@@ -139,7 +147,7 @@ jQuery.utils = {
 	},
 	
 	isUrl: function(sUrl) {
-		var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+		var pattern = new RegExp('^([a-z]{0,10}:?\\/\\/)?'+ // protocol
 				  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
 				  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
 				  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
