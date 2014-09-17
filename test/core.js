@@ -72,9 +72,17 @@ QUnit.test("josie-core utils", function(assert) {
 	// capitalize
 	assert.equal(Josie.utils.capitalize('foo'), 'Foo', 'capitalize( "foo" ) == "Foo"');
 	assert.equal(Josie.utils.capitalize('Bar'), 'Bar', 'capitalize( "Bar" ) == "Bar"');
-	// htmlAttr2CamelCase
+	// toCamelCase
 	assert.equal(Josie.utils.toCamelCase('data-test-foo'), 'dataTestFoo', 'toCamelCase( "data-test-foo" ) == "dataTestFoo"');
 	assert.equal(Josie.utils.toCamelCase('src'), 'src', 'toCamelCase( "src" ) == "src"');
+	// each
+	var iEachCount = 0; Josie.utils.each([1,2,3], function(){ iEachCount++; });
+	assert.equal(iEachCount, 3, 'each([1,2,3], function(){ iEachCount++; })');
+	var sConcatString = ''; Josie.utils.each(['Fus','Ro','Dah'], function(sItem){ sConcatString += sItem; });
+	assert.equal(sConcatString, 'FusRoDah', 'each(["Fus","Ro","Dah"], function(sItem){ sConcatString += sItem; })');
+	// map
+	assert.deepEqual(Josie.utils.map([1,2,3], function(iItem) { return iItem * 2; }), [2,4,6], 'map([1,2,3], function(iItem) { return iItem * 2; })');
+	assert.deepEqual(Josie.utils.map(['Fus','Ro','Dah'], function(iItem) { return iItem.toLowerCase(); }), ['fus','ro','dah'], 'map(["Fus","Ro","Dah"], function(iItem) { return iItem.toLowerCase(); })');
 });
 
 QUnit.test("josie-core namespaces & classes", function(assert) {
@@ -92,10 +100,12 @@ QUnit.test("josie-core namespaces & classes", function(assert) {
 });
 
 QUnit.test('josie-core other stuff', function(assert) {
-	assert.equal(typeof Josie.requestAnimationFrame, 'function', 'typeof jQuery.requestAnimationFrame == "function"');
-	assert.equal(typeof Josie.userAgent, 'string', 'typeof jQuery.agent == "string"');
-	assert.notEqual(Josie.device, null, 'jQuery.device != null');
-	assert.notEqual(Josie.device.mode, null, 'jQuery.device.mode != null');
-	assert.equal(typeof Josie.basePath, 'string', 'typeof jQuery.josieBasePath == "string"');
-	assert.equal(typeof Josie.localRun, 'boolean', 'typeof jQuery.josieLocalRun == "string"');
+	assert.equal(typeof Josie.requestAnimationFrame, 'function', 'typeof Josie.requestAnimationFrame == "function"');
+	assert.equal(typeof Josie.userAgent, 'string', 'typeof Josie.userAgent == "string"');
+	assert.notEqual(Josie.device, null, 'Josie.device != null');
+	assert.notEqual(Josie.device.mode, null, 'Josie.device.mode != null');
+	assert.equal(typeof Josie.basePath, 'string', 'typeof Josie.basePath == "string"');
+	assert.equal(typeof Josie.localRun, 'boolean', 'typeof Josie.localRun == "string"');
+	assert.equal(typeof Josie.environment, 'string', 'typeof Josie.environment == "string"');
+	assert.ok(Josie.environment == 'server' || Josie.environment == 'browser', 'Josie.environment == "server" || Josie.environment == "browser"');
 });

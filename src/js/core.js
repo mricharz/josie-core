@@ -105,6 +105,29 @@ Josie.utils = {
 		return sText.replace(/-(.)/g, function(m, p1) { 
 			return p1.toUpperCase(); 
         });
+	},
+	
+	//call callback for each iteration; break with return false
+	//only for unnamed arrays
+	each: function(oIterateable, fCallback) {
+		var iIndex = -1, iLength = oIterateable.length;
+
+	    while(++iIndex < iLength) {
+	    	if(fCallback(oIterateable[iIndex], iIndex) === false)
+	    		break;
+    	}
+    	return oIterateable;
+	},
+	
+	//call and save callback for each iteration
+	//only for unnamed arrays
+	map: function(oIterateable, fCallback) {
+		var iIndex = -1, iLength = oIterateable.length, oResult = Array(iLength);
+
+		while(++iIndex < iLength) {
+			oResult[iIndex] = fCallback(oIterateable[iIndex], iIndex);
+		}
+		return oResult;
 	}
 	
 };
@@ -209,7 +232,7 @@ Josie.log.warn = Josie.log.warning;
 //namespace generation
 Josie.declare = function(namespace, base) {
     if(base === undefined || base === null) {
-        base = window;
+        base = GLOBAL;
     }
     if(namespace && Josie.utils.isNamespace(namespace)) {
 	    var scopes = namespace.split('.');
@@ -231,13 +254,12 @@ Josie.classExists = function(className) {
 };
 
 //get class by name
-//TODO: remove jQuery usage in here
 Josie.getClass = function(className, base) {
 	if(base === undefined || base === null) {
         base = GLOBAL;
     }
-	if(Josie.utils.isNamespace(className) || (jQuery.isArray(className) && className.length)) {
-		var aScopes = jQuery.isArray(className) ? className : className.split('.'),
+	if(Josie.utils.isNamespace(className) || (Array.isArray(className) && className.length)) {
+		var aScopes = Array.isArray(className) ? className : className.split('.'),
 			sFirstScope = aScopes.shift();
 		
 		if(base[sFirstScope] !== undefined) {
@@ -289,19 +311,19 @@ Josie.require = function(className, options) {
 	}
 };
 
-//TODO: only for browsers
-Josie.loadCSS = function(url) {
-	 if (document.createStyleSheet){
-         document.createStyleSheet(url);
-     } else {
-         jQuery("head").append(jQuery("<link rel='stylesheet' href='"+url+"' type='text/css' media='screen' />"));
-     }
-};
-
 
 /**
  * ONLY IN BROWSERS - we should move this stuff into an own module for browser-usage
  */
+
+//load css file and apply styles
+Josie.loadCSS = function(url) {
+	if (document.createStyleSheet){
+		document.createStyleSheet(url);
+	} else {
+		jQuery("head").append(jQuery("<link rel='stylesheet' href='"+url+"' type='text/css' media='screen' />"));
+	}
+};
 
 //Class Pattern
 //Object can given as Return-Value or as Parameter
