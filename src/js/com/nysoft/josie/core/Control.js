@@ -1,7 +1,7 @@
 Josie.require('com.nysoft.josie.core.ManagedObject');
 
 //onBeforeInit
-com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.Control', 'onBeforeInit', function(e, data) {
+com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.Control', 'onBeforeInit', function(e) {
 	var oControlObject = e[0];
 	// set default id
 	(!oControlObject.getId())
@@ -9,7 +9,7 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.Control', 'onBefore
 });
 
 //onAfterInit
-com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.Control', 'onAfterInit', function(e, data) {
+com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.Control', 'onAfterInit', function(e) {
 	var oControlObject = e[0], arguments = e[1], domObject, options;
 	domObject = arguments[0] || null;
 	options = arguments[1] || null;

@@ -76,7 +76,7 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
 });
 
 //onAfterInit
-com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.Control', 'onAfterInit', function(e, data) {
+com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.Control', 'onAfterInit', function(e) {
 	var oControlObject = e[0], arguments = e[1], domObject, options;
 	domObject = arguments[0] || null;
 	options = arguments[1] || null;
