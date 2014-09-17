@@ -300,7 +300,7 @@ Josie.log.setLevel( Josie.log.level.Info );
 Utils:
 ------
 
-There are coming some little methods with the core.js. Have a look at [Josie.utils](https://github.com/mricharz/Simple-JavaScript-Framework/blob/master/core/src/main/js/core.js#L19 "Josie.utils in core.js").
+There are coming some little methods with the core.js. Have a look at [Josie.utils](https://github.com/mricharz/Simple-JavaScript-Framework/blob/master/src/js/core.js#L19 "Josie.utils in core.js").
 
 DOM Class Pattern:
 ------------------

@@ -14,7 +14,7 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
 			if(sPropertyName == "class") { // skip class-property
 				return true;
 			}
-			var propertyName = Josie.utils.htmlAttr2CamelCase(sPropertyName);
+			var propertyName = Josie.utils.toCamelCase(sPropertyName);
 			Josie.log.trace('Get PropertyValue of: '
 					+ propertyName, sValue);
 			var value;
