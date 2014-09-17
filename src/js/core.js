@@ -1,303 +1,302 @@
 //get global-object
-GLOBAL = GLOBAL || window;
+if(GLOBAL === undefined)
+	var GLOBAL = window;
 
-GLOBAL.Josie = (function(){
-	//detect environment
-	this.environment = (window === undefined) ? 'server' : 'browser';
+GLOBAL.Josie = {};
+//detect environment
+Josie.environment = (window === undefined) ? 'server' : 'browser';
+
+//detect last script source
+var scripts = document.getElementsByTagName('script');
+Josie.basePath = scripts[scripts.length-1].src.replace(/\/[^/]*?core\.[^js]*?js.*$/, '/');
+Josie.localRun = Josie.basePath.match(/^file:\/\//) ? true : false;
+
+Josie.version = {
+	'josie-core': '0.0.2'
+};
+
+//Some utils
+Josie.utils = {
 	
-	//detect last script source
-	var scripts = document.getElementsByTagName('script');
-	this.basePath = scripts[scripts.length-1].src.replace(/\/[^/]*?core\.[^js]*?js.*$/, '/');
-	this.localRun = jQuery.josieBasePath.match(/^file:\/\//) ? true : false;
+	//convert degrees into radian
+	deg2rad: function(angle) {
+	    return angle * .017453292519943295; //(angle / 180) * Math.PI;
+	},
 	
-	this.version = {
-		'josie-core': '0.0.2'
-	};
+	rad2deg: function(radiant) {
+		return radiant / .017453292519943295;
+	},
 	
-	//Some utils
-	this.utils = {
-		
-		//convert degrees into radian
-		deg2rad: function(angle) {
-		    return angle * .017453292519943295; //(angle / 180) * Math.PI;
-		},
-		
-		rad2deg: function(radiant) {
-			return radiant / .017453292519943295;
-		},
-		
-		//faster alternative for Math.round(value)
-		round: function(value) {
-		    return (0.5 + value) & 0xffff;	
-		},
-		
-		//faster alternative for Math.ceil(value)
-		ceil: function(value) {
-		    return ~~value + 1;	
-		},
-		
-		//faster alternative for Math.floor(value)
-		floor: function(value) {
-		    return ~~value;
-		},
-		
-		/* GUID Generator */
-		S4: function() {
-		    return ((1 + Math.random()) * 65536 | 0).toString(16).substring(1);
-		},
-		uniqueId: function() {
-		    return this.utils.S4() + this.utils.S4() + this.utils.S4() + this.utils.S4();
-		},
-		
-		isjQuery: function(oObj){
-		  return oObj && oObj.hasOwnProperty && oObj instanceof jQuery;
-		},
-		
-		isUrl: function(sUrl) {
-			var pattern = new RegExp('^([a-z]{0,10}:?\\/\\/)?'+ // protocol
-					  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-					  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-					  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-					  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-					  '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-			if(!pattern.test(sUrl)) {
-				return false;
-			}
-			return true;
-		},
-		
-		isSelector: function(sSelector) {
-			sSelector = sSelector.replace(/^.*?;/, ''); //remove modelKey
-			var ns = document.styleSheets[0];
-		    if(!ns) {
-		        document.getElementsByTagName('head')[0].appendChild(document.createElement('style'));
-		        ns = document.styleSheets[0];
-		    }
-		    try {
-		        ns.insertRule(sSelector+" {}", 0);
-		        ns.deleteRule(0);
-		        return true;
-		    } catch(e) {
-		        return false;
-		    }
-		},
-		
-		isNamespace: function(sNamespace) {
-			var pattern = new RegExp('^([a-zA-Z0-9_-]*\\.?)*$', 'i');
-			if(pattern.test(sNamespace) && typeof sNamespace === 'string' && sNamespace != '') {
-				return true;
-			}
+	//faster alternative for Math.round(value)
+	round: function(value) {
+	    return (0.5 + value) & 0xffff;	
+	},
+	
+	//faster alternative for Math.ceil(value)
+	ceil: function(value) {
+	    return ~~value + 1;	
+	},
+	
+	//faster alternative for Math.floor(value)
+	floor: function(value) {
+	    return ~~value;
+	},
+	
+	/* GUID Generator */
+	S4: function() {
+	    return ((1 + Math.random()) * 65536 | 0).toString(16).substring(1);
+	},
+	
+	uniqueId: function() {
+	    return Josie.utils.S4() + Josie.utils.S4() + Josie.utils.S4() + Josie.utils.S4();
+	},
+	
+	isjQuery: function(oObj){
+	  return oObj && oObj.hasOwnProperty && oObj instanceof jQuery;
+	},
+	
+	isUrl: function(sUrl) {
+		var pattern = new RegExp('^([a-z]{0,10}:?\\/\\/)?'+ // protocol
+				  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+				  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+				  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+				  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+				  '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+		if(!pattern.test(sUrl)) {
 			return false;
-		},
-		
-		getParameter: function(name) {
-		    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
-		},
-		
-		capitalize: function(value) {
-			return value.charAt(0).toUpperCase() + value.slice(1);
-		},
-		
-		//convert HTML-attributes like "data-foo-bar" into a camelCase-variant like "DataFooBar"
-		toCamelCase: function(sText) {
-			return sText.replace(/-(.)/g, function(m, p1) { 
-				return p1.toUpperCase(); 
-	        });
 		}
-		
-	};
+		return true;
+	},
 	
-	//logging
-	this.log = {
-			_getTimestamp: function() {
-				return new Date().toISOString();	
-			},
-			
-			_write: function() {
-				if(console !== undefined && console.log !== undefined) {
-					var data = [];
-					data.push('[' + this._getTimestamp() + '] ');
-					data.push(arguments);
-					console.log.apply(console, data);
-				}
-			},
-			
-			_writeInfo: function() {
-				if(console !== undefined && console.info !== undefined) {
-					var data = [];
-					data.push('[' + this._getTimestamp() + '] ');
-					data.push(arguments);
-					console.info.apply(console, data);
-				} else {
-					this._write.apply(this, arguments);
-				}
-			},
-			
-			_writeWarn: function() {
-				if(console !== undefined && console.warn !== undefined) {
-					var data = [];
-					data.push('[' + this._getTimestamp() + '] ');
-					data.push(arguments);
-					console.warn.apply(console, data);
-				} else {
-					this._writeInfo.apply(this, arguments);
-				}
-			},
-			
-			_writeError: function() {
-				if(console !== undefined && console.error !== undefined) {
-					var data = [];
-					data.push('[' + this._getTimestamp() + '] ');
-					data.push(arguments);
-					console.error.apply(console, data);
-				} else {
-					this._writeWarn.apply(this, arguments);
-				}
-			},
-			
-			trace: function() {
-				if(this.log.logLevel >= 5) {
-					this._write.apply(this, arguments);
-				}
-			},
-			
-			debug: function() {
-				if(this.log.logLevel >= 4) {
-					this._write.apply(this, arguments);
-				}
-			},
-			
-			info: function() {
-				if(this.log.logLevel >= 3) {
-					this._writeInfo.apply(this, arguments);
-				}
-			},
-			
-			warning: function() {
-				if(this.log.logLevel >= 2) {
-					this._writeWarn.apply(this, arguments);
-				}
-			},
+	isSelector: function(sSelector) {
+		sSelector = sSelector.replace(/^.*?;/, ''); //remove modelKey
+		var ns = document.styleSheets[0];
+	    if(!ns) {
+	        document.getElementsByTagName('head')[0].appendChild(document.createElement('style'));
+	        ns = document.styleSheets[0];
+	    }
+	    try {
+	        ns.insertRule(sSelector+" {}", 0);
+	        ns.deleteRule(0);
+	        return true;
+	    } catch(e) {
+	        return false;
+	    }
+	},
+	
+	isNamespace: function(sNamespace) {
+		var pattern = new RegExp('^([a-zA-Z0-9_-]*\\.?)*$', 'i');
+		if(pattern.test(sNamespace) && typeof sNamespace === 'string' && sNamespace != '') {
+			return true;
+		}
+		return false;
+	},
+	
+	getParameter: function(name) {
+	    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
+	},
+	
+	capitalize: function(value) {
+		return value.charAt(0).toUpperCase() + value.slice(1);
+	},
+	
+	//convert HTML-attributes like "data-foo-bar" into a camelCase-variant like "DataFooBar"
+	toCamelCase: function(sText) {
+		return sText.replace(/-(.)/g, function(m, p1) { 
+			return p1.toUpperCase(); 
+        });
+	}
+	
+};
 
-			error: function() {
-				if(this.log.logLevel >= 1) {
-					this._writeError.apply(this, arguments);
-				}
-			},
-			
-			setLevel: function(logLevel) {
-				this.log.logLevel = logLevel;
-			},
-			
-			level: {
-				None: 0,
-				Error: 1,
-				Warning: 2,
-				Info: 3,
-				Debug: 4,
-				Trace: 5,
-				All: 6
+//logging
+Josie.log = {
+		_getTimestamp: function() {
+			return new Date().toISOString();	
+		},
+		
+		_write: function() {
+			if(console !== undefined && console.log !== undefined) {
+				var data = [];
+				data.push('[' + this._getTimestamp() + '] ');
+				data.push(arguments);
+				console.log.apply(console, data);
 			}
-	};
-	
-	//add aliases
-	this.log.err = this.log.error;
-	this.log.warn = this.log.warning;
-	
-	//namespace generation
-	this.declare = function(namespace, base) {
-	    if(base === undefined || base === null) {
-	        base = window;
-	    }
-	    if(namespace && this.utils.isNamespace(namespace)) {
-		    var scopes = namespace.split('.');
-		    firstScope = scopes.shift();
-		    if(base[firstScope] === undefined) {
-		        base[firstScope] = {};
-		    }
-		    if(scopes.length) {
-		        return this.declare(scopes.join('.'), base[firstScope]); 
-		    }
-		    return base[firstScope];
-	    }
-	    return base;
-	};
-	
-	//check if a class exists
-	this.classExists = function(className) {
-		return (this.getClass(className) !== undefined);
-	};
-
-	//get class by name
-	//TODO: remove jQuery usage in here
-	this.getClass = function(className, base) {
-		if(base === undefined || base === null) {
-	        base = GLOBAL;
-	    }
-		if(this.utils.isNamespace(className) || (jQuery.isArray(className) && className.length)) {
-			var aScopes = jQuery.isArray(className) ? className : className.split('.'),
-				sFirstScope = aScopes.shift();
-			
-			if(base[sFirstScope] !== undefined) {
-				if(aScopes.length) {
-					return this.getClass(aScopes, base[sFirstScope]);
-				}
-				return base[sFirstScope];
-			}
-			return undefined;
-		}
-		return base[className];
-	};
-	
-	//Lazyloading
-	//TODO: Refactor this!
-	//TODO: only for browsers! make this useable for server-side
-	this._resources = [];
-	this.require = function(className, options) {
-		if(!className) return;
-		if(this.utils.isNamespace(className)) {
-			//check if class already exists
-			if(this.classExists(className)) return;
-			//convert className into path
-			className = this.basePath + className.replace(/\./g, '/')+'.js';
-		}
-		options = jQuery.extend({
-			async: false,
-			dataType: "script",
-			cache: true,
-			url: className
-		}, options);
+		},
 		
-		//check if resource is already loaded
-		for(var p = 0; p < this._resources.length; p++) {
-			if (className === this._resources[p])
-				return;
-		}
-		//load it
-		if(options.dataType == 'stylesheet') {
-			this.loadCSS(options.url);
-			this._resources.push(className);
-		} else {
-			jQuery.ajax(options).done(function(script, textStatus) {
-				Josie._resources.push(className);
-				Josie.log.trace('Loaded: '+options.url+' - '+textStatus);
-			}).fail(function(jqxhr, settings, exception) {
-				Josie.log.error('Could not load: '+options.url+' - '+jqxhr.status+' '+exception);
-			});
-		}
-	};
-	
-	//TODO: only for browsers
-	this.loadCSS = function(url) {
-		 if (document.createStyleSheet){
-	         document.createStyleSheet(url);
-	     } else {
-	         jQuery("head").append(jQuery("<link rel='stylesheet' href='"+url+"' type='text/css' media='screen' />"));
-	     }
-	};
-	
-})();
+		_writeInfo: function() {
+			if(console !== undefined && console.info !== undefined) {
+				var data = [];
+				data.push('[' + this._getTimestamp() + '] ');
+				data.push(arguments);
+				console.info.apply(console, data);
+			} else {
+				this._write.apply(this, arguments);
+			}
+		},
+		
+		_writeWarn: function() {
+			if(console !== undefined && console.warn !== undefined) {
+				var data = [];
+				data.push('[' + this._getTimestamp() + '] ');
+				data.push(arguments);
+				console.warn.apply(console, data);
+			} else {
+				this._writeInfo.apply(this, arguments);
+			}
+		},
+		
+		_writeError: function() {
+			if(console !== undefined && console.error !== undefined) {
+				var data = [];
+				data.push('[' + this._getTimestamp() + '] ');
+				data.push(arguments);
+				console.error.apply(console, data);
+			} else {
+				this._writeWarn.apply(this, arguments);
+			}
+		},
+		
+		trace: function() {
+			if(this.logLevel >= 5) {
+				this._write.apply(this, arguments);
+			}
+		},
+		
+		debug: function() {
+			if(this.logLevel >= 4) {
+				this._write.apply(this, arguments);
+			}
+		},
+		
+		info: function() {
+			if(this.logLevel >= 3) {
+				this._writeInfo.apply(this, arguments);
+			}
+		},
+		
+		warning: function() {
+			if(this.logLevel >= 2) {
+				this._writeWarn.apply(this, arguments);
+			}
+		},
 
+		error: function() {
+			if(this.logLevel >= 1) {
+				this._writeError.apply(this, arguments);
+			}
+		},
+		
+		setLevel: function(logLevel) {
+			this.logLevel = logLevel;
+		},
+		
+		level: {
+			None: 0,
+			Error: 1,
+			Warning: 2,
+			Info: 3,
+			Debug: 4,
+			Trace: 5,
+			All: 6
+		}
+};
+
+//add aliases
+Josie.log.err = Josie.log.error;
+Josie.log.warn = Josie.log.warning;
+
+//namespace generation
+Josie.declare = function(namespace, base) {
+    if(base === undefined || base === null) {
+        base = window;
+    }
+    if(namespace && Josie.utils.isNamespace(namespace)) {
+	    var scopes = namespace.split('.');
+	    firstScope = scopes.shift();
+	    if(base[firstScope] === undefined) {
+	        base[firstScope] = {};
+	    }
+	    if(scopes.length) {
+	        return Josie.declare(scopes.join('.'), base[firstScope]); 
+	    }
+	    return base[firstScope];
+    }
+    return base;
+};
+
+//check if a class exists
+Josie.classExists = function(className) {
+	return (Josie.getClass(className) !== undefined);
+};
+
+//get class by name
+//TODO: remove jQuery usage in here
+Josie.getClass = function(className, base) {
+	if(base === undefined || base === null) {
+        base = GLOBAL;
+    }
+	if(Josie.utils.isNamespace(className) || (jQuery.isArray(className) && className.length)) {
+		var aScopes = jQuery.isArray(className) ? className : className.split('.'),
+			sFirstScope = aScopes.shift();
+		
+		if(base[sFirstScope] !== undefined) {
+			if(aScopes.length) {
+				return Josie.getClass(aScopes, base[sFirstScope]);
+			}
+			return base[sFirstScope];
+		}
+		return undefined;
+	}
+	return base[className];
+};
+
+//Lazyloading
+//TODO: Refactor this!
+//TODO: only for browsers! make this useable for server-side
+Josie._resources = [];
+Josie.require = function(className, options) {
+	if(!className) return;
+	if(Josie.utils.isNamespace(className)) {
+		//check if class already exists
+		if(Josie.classExists(className)) return;
+		//convert className into path
+		className = Josie.basePath + className.replace(/\./g, '/')+'.js';
+	}
+	options = jQuery.extend({
+		async: false,
+		dataType: "script",
+		cache: true,
+		url: className
+	}, options);
+	
+	//check if resource is already loaded
+	for(var p = 0; p < Josie._resources.length; p++) {
+		if (className === Josie._resources[p])
+			return;
+	}
+	//load it
+	if(options.dataType == 'stylesheet') {
+		Josie.loadCSS(options.url);
+		Josie._resources.push(className);
+	} else {
+		jQuery.ajax(options).done(function(script, textStatus) {
+			Josie._resources.push(className);
+			Josie.log.trace('Loaded: '+options.url+' - '+textStatus);
+		}).fail(function(jqxhr, settings, exception) {
+			Josie.log.error('Could not load: '+options.url+' - '+jqxhr.status+' '+exception);
+		});
+	}
+};
+
+//TODO: only for browsers
+Josie.loadCSS = function(url) {
+	 if (document.createStyleSheet){
+         document.createStyleSheet(url);
+     } else {
+         jQuery("head").append(jQuery("<link rel='stylesheet' href='"+url+"' type='text/css' media='screen' />"));
+     }
+};
 
 
 /**
@@ -319,11 +318,11 @@ jQuery.fn.generateObject = function (domObject) {
                 //Check if ClassName is defined
                 if (className) {
                 	//require class
-                	jQuery.require(className);
+                	Josie.require(className);
                     //Generating Object
                 	var nsScopes = className.split('.');
                 	className = nsScopes.pop();
-                	var base = jQuery.declare(nsScopes.join('.'));
+                	var base = Josie.declare(nsScopes.join('.'));
                 	if(jQuery.isFunction(base[className])) {
 	                    var obj = new base[className](t, options);
 	                    if (obj) {
@@ -331,7 +330,7 @@ jQuery.fn.generateObject = function (domObject) {
 	                    }
                 	} else {
                 		nsScopes.push(className);
-                		jQuery.log.error('Class not found: '+nsScopes.join('.'));
+                		Josie.log.error('Class not found: '+nsScopes.join('.'));
                 	}
                 }
             }

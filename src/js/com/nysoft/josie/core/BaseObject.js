@@ -39,9 +39,9 @@
  * 
  * Note: arrays are validated as objects!
  */
-jQuery.declare('com.nysoft.josie.core.BaseObject');
-jQuery.require('com.nysoft.josie.core.Exception');
-jQuery.require('com.nysoft.josie.core.EventStack');
+Josie.declare('com.nysoft.josie.core.BaseObject');
+Josie.require('com.nysoft.josie.core.Exception');
+Josie.require('com.nysoft.josie.core.EventStack');
 
 com.nysoft.josie.core.BaseObject = function() {};
 
@@ -58,7 +58,7 @@ com.nysoft.josie.core.BaseObject.extend = function (className, classDescObject) 
     var nsScopes = className.split('.');
     className = nsScopes.pop();
     var nameSpace = nsScopes.join('.');
-    var base = jQuery.declare(nameSpace);
+    var base = Josie.declare(nameSpace);
 
     //Declare class
     base[className] = jQuery.extend(function () {
@@ -173,7 +173,7 @@ com.nysoft.josie.core.BaseObject.extend = function (className, classDescObject) 
         		type = type.type;
         	}
             type = (type) ? type.toLowerCase() : type;
-            var name = jQuery.utils.capitalize(key);
+            var name = Josie.utils.capitalize(key);
             
             //set defaultValue
             base[className].prototype.aDefaultProperties[key] = defaultValue;

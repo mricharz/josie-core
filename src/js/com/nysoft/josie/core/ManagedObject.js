@@ -1,4 +1,4 @@
-jQuery.require('com.nysoft.josie.core.BaseObject');
+Josie.require('com.nysoft.josie.core.BaseObject');
 
 //onBeforeInit
 com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'onBeforeInit', function(e, data) {
@@ -14,8 +14,8 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
 			if(sPropertyName == "class") { // skip class-property
 				return true;
 			}
-			var propertyName = jQuery.utils.htmlAttr2CamelCase(sPropertyName);
-			jQuery.log.trace('Get PropertyValue of: '
+			var propertyName = Josie.utils.htmlAttr2CamelCase(sPropertyName);
+			Josie.log.trace('Get PropertyValue of: '
 					+ propertyName, sValue);
 			var value;
 			//check for shot-hand selector
@@ -28,16 +28,16 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
 			}
 			try { //try to parse as JSON-Data and set as property-value
 				value = jQuery.parseJSON(sValue);
-				jQuery.log.trace('Parsed as JSON');
+				Josie.log.trace('Parsed as JSON');
 				//check for selector
-				if(value.selector && jQuery.utils.isSelector(value.selector)) {
-					jQuery.log.trace('has selector binding');
+				if(value.selector && Josie.utils.isSelector(value.selector)) {
+					Josie.log.trace('has selector binding');
 					oControlObject.addBinding(propertyName, value.selector);
 				}
 				delete options[propertyName];
 				return true;
 			} catch (err) { //otherwise look for binding selector
-				jQuery.log.trace('Parsed as string-value');
+				Josie.log.trace('Parsed as string-value');
 				value = sValue;
 			}
 			options[propertyName] = value;
@@ -64,7 +64,7 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
 		//aggregate to default "content" for content without aggregation
 		var aContentObjects = domObject.children(':not([data-property])[data-class]').generateObject();
 		if(aContentObjects.length) {
-			jQuery.log.debug('Found default content-aggregation.', aContentObjects);
+			Josie.log.debug('Found default content-aggregation.', aContentObjects);
 			options.content = (options.content) ? options.content.concat(aContentObjects) : aContentObjects;
 		}
 		//clear content
@@ -92,7 +92,7 @@ com.nysoft.josie.core.BaseObject.extend('com.nysoft.josie.core.ManagedObject', {
 	},
 	
 	init: function(domObject) {
-		jQuery.log.trace('Init ManagedObject', arguments);
+		Josie.log.trace('Init ManagedObject', arguments);
 		if(domObject && domObject.detach) {
 			domObject.detach();
 		}
@@ -103,7 +103,7 @@ com.nysoft.josie.core.BaseObject.extend('com.nysoft.josie.core.ManagedObject', {
 	},
 	
 	attachTo: function(domObject, prepend) {
-		if(!jQuery.utils.isjQuery(domObject)) {
+		if(!Josie.utils.isjQuery(domObject)) {
 			domObject = jQuery(domObject);
 		}
 		if(!prepend) {

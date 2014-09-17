@@ -1,4 +1,4 @@
-jQuery.declare('com.nysoft.josie.core.Socket.Status');
+Josie.declare('com.nysoft.josie.core.Socket.Status');
 
 com.nysoft.josie.core.Socket.Status = {
 	Opened: 'opened',

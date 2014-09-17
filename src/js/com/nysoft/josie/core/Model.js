@@ -1,5 +1,5 @@
-jQuery.require('com.nysoft.josie.core.ManagedObject');
-jQuery.require('org.jsonselect.JSONSelect');
+Josie.require('com.nysoft.josie.core.ManagedObject');
+Josie.require('org.jsonselect.JSONSelect');
 
 com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Model', {
 	
@@ -12,7 +12,7 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Model', {
 	init: function(domObject) {
 		this._super('init', domObject);
 		//reference model instance
-		jQuery.log.trace('Referencing Model: '+this.getKey());
+		Josie.log.trace('Referencing Model: '+this.getKey());
 		com.nysoft.josie.core.Model._models[this.getKey()] = this;
 	},
 	
@@ -26,12 +26,12 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Model', {
 		if(!this._loadedOnce) {
 			this._loadedOnce = true;
 		}
-		jQuery.log.trace('Loading Model-Data');
+		Josie.log.trace('Loading Model-Data');
 	},
 	
 	_updateBindings: function(bForceRerender) {
 		this.trigger('onBeforeUpdatingBindings', this, arguments);
-		jQuery.log.trace('Updating bindings. With rerender: '+bForceRerender);
+		Josie.log.trace('Updating bindings. With rerender: '+bForceRerender);
 		var aBindings = this.getBindings();
 		jQuery.each(aBindings, jQuery.proxy(function(iIndex, oBinding) {
 			this._updateBinding(oBinding, bForceRerender);
@@ -54,7 +54,7 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Model', {
 	},
 	
 	_updateBinding: function(oBinding, bForceRerender) {
-		jQuery.log.trace('Updating binding', oBinding, bForceRerender);
+		Josie.log.trace('Updating binding', oBinding, bForceRerender);
 		//get value of selector
 		var oValue = this._evaluateSelector(oBinding.selector);
 		//set object attribute value
@@ -80,7 +80,7 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Model', {
 		try {
 			return oSelector.match(this.getData());
 		} catch(err) {
-			jQuery.log.error(err);
+			Josie.log.error(err);
 		}
 	},
 	
@@ -93,7 +93,7 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Model', {
 		};
 		//save binding in model
 		this.getBindings().push(oBinding);
-		jQuery.log.trace('Added new binding', oBinding);
+		Josie.log.trace('Added new binding', oBinding);
 		//update this binding (without rerender)
 		this._updateBinding(oBinding, false);
 		return oBinding;

@@ -1,4 +1,4 @@
-jQuery.declare('com.nysoft.josie.core.Exception');
+Josie.declare('com.nysoft.josie.core.Exception');
 
 com.nysoft.josie.core.Exception = function(message) {
 	this.message = message;

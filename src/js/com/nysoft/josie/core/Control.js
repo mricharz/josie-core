@@ -1,11 +1,11 @@
-jQuery.require('com.nysoft.josie.core.ManagedObject');
+Josie.require('com.nysoft.josie.core.ManagedObject');
 
 //onBeforeInit
 com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.Control', 'onBeforeInit', function(e, data) {
 	var oControlObject = e[0];
 	// set default id
 	(!oControlObject.getId())
-		&& oControlObject.setId(jQuery.utils.uniqueId());
+		&& oControlObject.setId(Josie.utils.uniqueId());
 });
 
 //onAfterInit
@@ -47,9 +47,9 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
 	_forceUpdateProperties: function() {
 		var aProperties = this.getProperties();
 		jQuery.each(aProperties, jQuery.proxy(function(key, value) {
-			var setter = 'set'+jQuery.utils.capitalize(key.slice(1));
+			var setter = 'set'+Josie.utils.capitalize(key.slice(1));
 			if(this[setter]) {
-				jQuery.log.trace('Call '+setter, value);
+				Josie.log.trace('Call '+setter, value);
 				this[setter].call(this, value);
 			}
 		}, this));
@@ -65,7 +65,7 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
 	},
 	
 	invalidate: function() {
-		jQuery.log.debug('Invalidating '+this.className);
+		Josie.log.debug('Invalidating '+this.className);
 		if(this.__valid !== false) {
 	  		this.__valid = false;
 			setTimeout(jQuery.proxy(function() {

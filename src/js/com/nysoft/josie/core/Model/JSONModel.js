@@ -1,4 +1,4 @@
-jQuery.require('com.nysoft.josie.core.Model');
+Josie.require('com.nysoft.josie.core.Model');
 
 com.nysoft.josie.core.Model.extend('com.nysoft.josie.core.Model.JSONModel', {
 	
@@ -7,7 +7,7 @@ com.nysoft.josie.core.Model.extend('com.nysoft.josie.core.Model.JSONModel', {
 	},
 	
 	init: function(domObject, options) {
-		jQuery.log.trace('Init JSONModel');
+		Josie.log.trace('Init JSONModel');
 		this._super('init', options);
 	},
 	
@@ -24,7 +24,7 @@ com.nysoft.josie.core.Model.extend('com.nysoft.josie.core.Model.JSONModel', {
 	},
 	
 	_onError: function(oData) {
-		jQuery.log.error('Error receiving data.', oData);
+		Josie.log.error('Error receiving data.', oData);
 		this.trigger('onError', oData);
 	},
 	

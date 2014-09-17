@@ -1,5 +1,5 @@
-jQuery.require('com.nysoft.josie.core.BaseObject');
-jQuery.require('com.nysoft.josie.core.Socket.Status');
+Josie.require('com.nysoft.josie.core.BaseObject');
+Josie.require('com.nysoft.josie.core.Socket.Status');
 
 com.nysoft.josie.core.BaseObject.extend('com.nysoft.josie.core.Socket', {
 	meta: {
@@ -49,13 +49,13 @@ com.nysoft.josie.core.BaseObject.extend('com.nysoft.josie.core.Socket', {
 	},
 	
 	onMessage: function(e) {
-		jQuery.log.trace(e.data);
+		Josie.log.trace(e.data);
 		if(jQuery.isFunction(this.getOnMessage()))
 			this.getOnMessage().call(this, e);
 	},
 	
 	onError: function(e) {
-		jQuery.log.trace(e);
+		Josie.log.trace(e);
 		if(jQuery.isFunction(this.getOnError()))
 			this.getOnError().call(this, e);
 	},

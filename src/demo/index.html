@@ -20,12 +20,12 @@
 		<script>
 		
 			// Activate debug-logging (have a look at your browser-console)
-			jQuery.log.setLevel(jQuery.log.level.All);
+			Josie.log.setLevel(Josie.log.level.All);
 			
 			
 			
 			// load required core.Model
-			jQuery.require('com.nysoft.josie.core.Model');
+			Josie.require('com.nysoft.josie.core.Model');
 			
 			// create a dataModel
 			var oDataModel = new com.nysoft.josie.core.Model(null, {
@@ -43,7 +43,7 @@
 			
 			
 			// load required core.Control
-			jQuery.require('com.nysoft.josie.core.Control');
+			Josie.require('com.nysoft.josie.core.Control');
 			
 			// extend core.Control into demo.App
 			com.nysoft.josie.core.Control.extend('demo.App', {
