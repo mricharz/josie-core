@@ -12,7 +12,7 @@ Josie.basePath = scripts[scripts.length-1].src.replace(/\/[^/]*?core\.[^js]*?js.
 Josie.localRun = Josie.basePath.match(/^file:\/\//) ? true : false;
 
 Josie.version = {
-	'josie-core': '0.0.2'
+	'josie-core': '0.0.3'
 };
 
 //Some utils

@@ -14,7 +14,7 @@ Namespaces:
 
 To create a new namespace _foo.bar_:
 ```javascript
-jQuery.declare('foo.bar');
+Josie.declare('foo.bar');
 ```
 
 to call a namespace:
@@ -106,16 +106,16 @@ Required Classes:
 
 If you require a class that is not yet loaded, you can call:
 ```javascript
-jQuery.require('foo.bar.Foobar');
+Josie.require('foo.bar.Foobar');
 ```
 this will load synchronously: /foo/bar/Foobar.js
 
-You also can load external Scripts using _jQuery.require_:
+You also can load external Scripts using _Josie.require_:
 ```javascript
-jQuery.require('http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js');
+Josie.require('http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js');
 ```
 
-*A script will only be loaded once! If this is already loaded, _jQuery.require_ will skip without an error.*
+*A script will only be loaded once! If this is already loaded, _Josie.require_ will skip without an error.*
 
 Events:
 -------
@@ -283,24 +283,24 @@ Logging:
 It is recommended to use the built-in logging mechanism instead of console.log to prevent errors in some browsers.
 
 ```javascript
-jQuery.log.trace('trace foobar');
-jQuery.log.debug('debug foobar');
-jQuery.log.info('info foobar');
-jQuery.log.warning('warning foobar');
-jQuery.log.error('ERROR foobar');
+Josie.log.trace('trace foobar');
+Josie.log.debug('debug foobar');
+Josie.log.info('info foobar');
+Josie.log.warning('warning foobar');
+Josie.log.error('ERROR foobar');
 ```
 
 The default LogLevel is _None_. To set the LogLevel use:
 ```javascript
-jQuery.log.setLevel( jQuery.log.level.All );
-jQuery.log.setLevel( jQuery.log.level.Info );
+Josie.log.setLevel( Josie.log.level.All );
+Josie.log.setLevel( Josie.log.level.Info );
 /* None, Error, Warning, Info, Debug, Trace, All */
 ```
 
 Utils:
 ------
 
-There are coming some little methods with the core.js. Have a look at [jQuery.utils](https://github.com/mricharz/Simple-JavaScript-Framework/blob/master/core/src/main/js/core.js#L95 "jQuery.utils in core.js").
+There are coming some little methods with the core.js. Have a look at [Josie.utils](https://github.com/mricharz/Simple-JavaScript-Framework/blob/master/core/src/main/js/core.js#L19 "Josie.utils in core.js").
 
 DOM Class Pattern:
 ------------------
@@ -323,7 +323,7 @@ Dependencies:
 
 This Framework depends on [jQuery](http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js "jQuery 1.9.1")
 This should work with all jQuery-Versions from 1.4 up to 2.x.
-If there is any error/bug with some jquery version, please tell me or feel free to push a fix.
+If there is any error/bug with some jQuery version, please tell me or feel free to push a fix.
 
 Usage:
 ------

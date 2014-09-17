@@ -1,6 +1,6 @@
 {
   "name": "josie-core",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Josie Framework core-package",
   "main": "gulpfile.js",
   "dependencies": {},
