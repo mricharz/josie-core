@@ -102,7 +102,7 @@ Josie.utils = {
 	
 	//convert HTML-attributes like "data-foo-bar" into a camelCase-variant like "DataFooBar"
 	toCamelCase: function(sText) {
-		return sText.replace(/-(.)/g, function(m, p1) { 
+		return sText.replace(/-(.)/gi, function(m, p1) { 
 			return p1.toUpperCase(); 
         });
 	},

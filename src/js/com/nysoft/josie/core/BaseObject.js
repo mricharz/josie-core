@@ -69,7 +69,7 @@ com.nysoft.josie.core.BaseObject.extend = function (className, classDescObject) 
         };
         
         this.setProperties = function(properties) {
-            if(jQuery.isArray(properties) || jQuery.isPlainObject(properties)) {
+            if(Array.isArray(properties) || jQuery.isPlainObject(properties)) {
                 jQuery.each(properties, jQuery.proxy(function(key, value) {
                     this.setProperty(key, value);
                 }, this));
