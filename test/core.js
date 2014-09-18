@@ -85,6 +85,32 @@ QUnit.test('utils', function(assert) {
 	assert.deepEqual(Josie.utils.map(['Fus','Ro','Dah'], function(iItem) { return iItem.toLowerCase(); }), ['fus','ro','dah'], 'map(["Fus","Ro","Dah"], function(iItem) { return iItem.toLowerCase(); })');
 });
 
+QUnit.test('logging', function(assert) {
+	var iLog = 0, iInfo = 0, iWarn = 0, iError = 0;
+	if(GLOBAL.console === undefined) {
+		GLOBAL.console = {};
+	}
+	GLOBAL.console.log = function() { iLog++; };
+	GLOBAL.console.info = function() { iInfo++; };
+	GLOBAL.console.warn = function() { iWarn++; };
+	GLOBAL.console.error = function() { iError++; };
+	
+	Josie.log.trace('test');
+	assert.equal(iLog, 1, 'Josie.log.trace("test")');
+	Josie.log.debug('test');
+	assert.equal(iLog, 2, 'Josie.log.debug("test")');
+	Josie.log.info('test');
+	assert.equal(iInfo, 1, 'Josie.log.info("test")');
+	Josie.log.warning('test');
+	assert.equal(iWarn, 1, 'Josie.log.warning("test")');
+	Josie.log.warn('test');
+	assert.equal(iWarn, 2, 'Josie.log.warn("test")');
+	Josie.log.error('test');
+	assert.equal(iError, 1, 'Josie.log.error("test")');
+	Josie.log.err('test');
+	assert.equal(iError, 2, 'Josie.log.err("test")');
+});
+
 QUnit.test('namespaces & classes', function(assert) {
 	// declare
 	assert.ok(Josie.declare('com.nysoft.josie.test.Test'), 'Josie.declare("com.nysoft.josie.test.Test")');

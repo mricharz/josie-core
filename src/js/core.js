@@ -8,7 +8,7 @@ Josie.environment = (window === undefined) ? 'server' : 'browser';
 
 //detect last script source
 var scripts = document.getElementsByTagName('script');
-Josie.basePath = GLOBAL.Josie.basePath || scripts[scripts.length-1].src.replace(/\/[^/]*?core\.[^js]*?js.*$/, '/');
+Josie.basePath = GLOBAL.Josie.basePath || scripts[scripts.length-1].src.replace(/\/[^/]*?core\.[^js]*?js.*$/, '/') || __dirName;
 Josie.localRun = Josie.basePath.match(/^file:\/\//) ? true : false;
 
 Josie.version = {
