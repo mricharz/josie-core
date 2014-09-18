@@ -1,9 +1,9 @@
-QUnit.module('josie-core core.js')
-QUnit.test("josie-core version", function(assert) {
+QUnit.module('josie-core - core');
+QUnit.test('version', function(assert) {
 	assert.ok(Josie.version['josie-core'], JSON.stringify(Josie.version['josie-core']));
 });
 
-QUnit.test("josie-core utils", function(assert) {
+QUnit.test('utils', function(assert) {
 	// deg2rad and rad2deg
 	assert.equal(Josie.utils.deg2rad(50), 0.8726646259971648, 'deg2rad( 50 ) == 0.8726646259971648');
 	assert.equal(Josie.utils.rad2deg(0.8726646259971648), 50, 'rad2deg( 0.8726646259971648 ) == 50');
@@ -85,7 +85,7 @@ QUnit.test("josie-core utils", function(assert) {
 	assert.deepEqual(Josie.utils.map(['Fus','Ro','Dah'], function(iItem) { return iItem.toLowerCase(); }), ['fus','ro','dah'], 'map(["Fus","Ro","Dah"], function(iItem) { return iItem.toLowerCase(); })');
 });
 
-QUnit.test("josie-core namespaces & classes", function(assert) {
+QUnit.test('namespaces & classes', function(assert) {
 	// declare
 	assert.ok(Josie.declare('com.nysoft.josie.test.Test'), 'Josie.declare("com.nysoft.josie.test.Test")');
 	assert.equal(Josie.declare('com.nysoft.josie.test.Test'), com.nysoft.josie.test.Test, 'Josie.declare("com.nysoft.josie.test.Test") == com.nysoft.josie.test.Test');
@@ -99,7 +99,7 @@ QUnit.test("josie-core namespaces & classes", function(assert) {
 	assert.equal(Josie.require('com.nysoft.josie.test.Test'), null, 'Josie.require("com.nysoft.josie.test.Test")');
 });
 
-QUnit.test('josie-core other stuff', function(assert) {
+QUnit.test('other stuff', function(assert) {
 	assert.equal(typeof Josie.requestAnimationFrame, 'function', 'typeof Josie.requestAnimationFrame == "function"');
 	assert.equal(typeof Josie.userAgent, 'string', 'typeof Josie.userAgent == "string"');
 	assert.notEqual(Josie.device, null, 'Josie.device != null');
