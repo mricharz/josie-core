@@ -76,8 +76,7 @@ Josie.utils = {
 	        ns = document.styleSheets[0];
 	    }
 	    try {
-	        ns.insertRule(sSelector+" {}", 0);
-	        ns.deleteRule(0);
+            document.querySelector(sSelector);
 	        return true;
 	    } catch(e) {
 	        return false;
@@ -273,6 +272,29 @@ Josie.getClass = function(className, base) {
 	return base[className];
 };
 
+//Get and set namespace-mappings
+Josie._resourceMapping = [];
+Josie.namespace = function(sNamespace, sPath) {
+    if(sNamespace && sPath) {
+        Josie._resourceMapping.push({namespace: sNamespace, path: sPath});
+    } else if (sNamespace) {
+        var oNamespaceMapping = {
+            basePath: Josie.basePath,
+            namespace: '',
+            package: sNamespace
+        };
+        Josie.log.debug(Josie._resourceMapping);
+        Josie.utils.each(Josie._resourceMapping, function(oMapping){
+            if(oMapping.namespace.length > oNamespaceMapping.namespace && sNamespace.indexOf(oMapping.namespace) > -1) {
+                oNamespaceMapping.basePath = oMapping.path + '/';
+                oNamespaceMapping.namespace = oMapping.namespace;
+                oNamespaceMapping.package = sNamespace.replace(oMapping.namespace + '.', '');
+            }
+        });
+        return oNamespaceMapping;
+    }
+};
+
 //Lazyloading
 //TODO: Refactor this!
 //TODO: only for browsers! make this useable for server-side
@@ -282,8 +304,10 @@ Josie.require = function(className, options) {
 	if(Josie.utils.isNamespace(className)) {
 		//check if class already exists
 		if(Josie.classExists(className)) return;
+        //check if there is a namespace-mapping to another path
+        var oNamespace = Josie.namespace(className);
 		//convert className into path
-		className = Josie.basePath + className.replace(/\./g, '/')+'.js';
+		className = oNamespace.basePath + oNamespace.package.replace(/\./g, '/')+'.js';
 	}
 	options = jQuery.extend({
 		async: false,

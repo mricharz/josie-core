@@ -11,12 +11,13 @@
   <!-- Loading QUinit -->
   <script src="//code.jquery.com/qunit/qunit-1.15.0.js"></script>
   <!-- Loading jQuery -->
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <!-- Loading Josie-Core -->
   <script src="../src/js/core.js"></script>
   <script>
   //set debug logging
   Josie.log.setLevel(Josie.log.level.All);
+  Josie.namespace('foo', 'foo');
   </script>
   <!-- Loading and running tests -->
   <script src="core.js"></script>
