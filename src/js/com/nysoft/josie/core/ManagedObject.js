@@ -28,14 +28,18 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
 			}
 			try { //try to parse as JSON-Data and set as property-value
 				value = jQuery.parseJSON(sValue);
-				Josie.log.trace('Parsed as JSON');
-				//check for selector
-				if(value.selector && Josie.utils.isSelector(value.selector)) {
-					Josie.log.trace('has selector binding');
-					oControlObject.addBinding(propertyName, value.selector);
-				}
-				delete options[propertyName];
-				return true;
+                if(typeof value == 'object') {
+                    Josie.log.trace('Parsed as JSON');
+                    //check for selector
+                    if (value.selector && Josie.utils.isSelector(value.selector)) {
+                        Josie.log.trace('has selector binding');
+                        oControlObject.addBinding(propertyName, value.selector);
+                    }
+                    delete options[propertyName];
+                    return true;
+                } else {
+                    value = sValue;
+                }
 			} catch (err) { //otherwise look for binding selector
 				Josie.log.trace('Parsed as string-value');
 				value = sValue;
