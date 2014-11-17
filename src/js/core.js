@@ -283,7 +283,6 @@ Josie.namespace = function(sNamespace, sPath) {
             namespace: '',
             package: sNamespace
         };
-        Josie.log.debug(Josie._resourceMapping);
         Josie.utils.each(Josie._resourceMapping, function(oMapping){
             if(oMapping.namespace.length > oNamespaceMapping.namespace && sNamespace.indexOf(oMapping.namespace) > -1) {
                 oNamespaceMapping.basePath = oMapping.path + '/';
