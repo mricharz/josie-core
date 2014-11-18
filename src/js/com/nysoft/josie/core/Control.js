@@ -28,13 +28,11 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
 	
 	meta: {
 		id: 'string',
-		visible: 'boolean'
+		visible: 'boolean',
+        cssClasses: { type: 'object', defaultValue: {} }
 	},
 	
-	init: function() {
-        //init empty container for cssClasses
-        this._cssClasses = {};
-    },
+	init: function() {},
 	
 	_renderControl: function() {
 		if(this.getDom()) {
@@ -86,16 +84,16 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
     },
 
     addCssClass: function(sClass) {
-        this._cssClasses[sClass] = true;
+        this.getCssClasses()[sClass] = true;
     },
 
     removeCssClass: function(sClass) {
-        delete this._cssClasses[sClass];
+        delete this.getCssClasses()[sClass];
     },
 
     writeCssClasses: function() {
-        var aCssClasses = jQuery.map(this._cssClasses, function(value, index) { return index; });
-        this._cssClasses = {};  // empty it for next write or writing-step
+        var aCssClasses = jQuery.map(this.getCssClasses(), function(value, index) { return index; });
+        this.setCssClasses({});  // empty it for next write or writing-step
         return ' class="'+aCssClasses.join(' ')+'" ';
     }
 	

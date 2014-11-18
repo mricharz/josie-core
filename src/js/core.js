@@ -272,6 +272,24 @@ Josie.getClass = function(className, base) {
 	return base[className];
 };
 
+Josie._aliasMapping = [];
+Josie.alias = function(sAlias, sNamespace) {
+    if(sAlias) {
+        if (!GLOBAL[sAlias]) {
+            if(sNamespace) {
+                Josie._aliasMapping.push({
+                    alias: sAlias,
+                    namespace: sNamespace
+                });
+                GLOBAL[sAlias] = Josie.declare(sNamespace);
+            }
+        }
+        return GLOBAL[sAlias];
+    } else {
+        return Josie._aliasMapping;
+    }
+};
+
 //Get and set namespace-mappings
 Josie._resourceMapping = [];
 Josie.namespace = function(sNamespace, sPath) {
@@ -301,6 +319,12 @@ Josie._resources = [];
 Josie.require = function(className, options) {
 	if(!className) return;
 	if(Josie.utils.isNamespace(className)) {
+        //check if is an alias and get the fullname
+        Josie.utils.each(Josie._aliasMapping, function(oAlias) {
+            if(className.indexOf(oAlias.alias) == 0) {
+                className = className.replace(oAlias.alias, oAlias.namespace);
+            }
+        });
 		//check if class already exists
 		if(Josie.classExists(className)) return;
         //check if there is a namespace-mapping to another path
