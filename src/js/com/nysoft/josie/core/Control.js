@@ -31,7 +31,10 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
 		visible: 'boolean'
 	},
 	
-	init: function() {},
+	init: function() {
+        //init empty container for cssClasses
+        this._cssClasses = {};
+    },
 	
 	_renderControl: function() {
 		if(this.getDom()) {
@@ -73,6 +76,27 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
 				this.rerender();
 			}, this), 0);
 		}
-	}
+	},
+
+    replaceDom: function(sContent) {
+        var jqOldDom = this.getDom(),
+            jqNewDom = jQuery(sContent);
+        this.setDom(jqNewDom);
+        jqOldDom.replaceWith(this.getDom());
+    },
+
+    addCssClass: function(sClass) {
+        this._cssClasses[sClass] = true;
+    },
+
+    removeCssClass: function(sClass) {
+        delete this._cssClasses[sClass];
+    },
+
+    writeCssClasses: function() {
+        var aCssClasses = jQuery.map(this._cssClasses, function(value, index) { return index; });
+        this._cssClasses = {};  // empty it for next write or writing-step
+        return ' class="'+aCssClasses.join(' ')+'" ';
+    }
 	
 });
