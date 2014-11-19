@@ -183,7 +183,7 @@ com.nysoft.josie.core.BaseObject.extend = function (className, classDescObject) 
                 if (type === null || typeof (value) === type || value === null) {
                     this.setProperty(key, value);
                 } else {
-                    throw new com.nysoft.josie.core.Exception('Parameter must be a type of: ' + type);
+                    throw new com.nysoft.josie.core.Exception('Parameter "'+name+'" must be a type of: ' + type);
                 }
             };
 
