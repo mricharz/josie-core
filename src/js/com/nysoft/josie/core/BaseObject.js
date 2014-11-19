@@ -158,9 +158,7 @@ com.nysoft.josie.core.BaseObject.extend = function (className, classDescObject) 
     base[className].prototype = new this();
     base[className].prototype.$parent = new this();
     base[className].prototype.className = nameSpace+'.'+className;
-    if(!base[className].prototype.aDefaultProperties) {
-    	base[className].prototype.aDefaultProperties = {};
-    }
+    base[className].prototype.aDefaultProperties = jQuery.extend({}, this.aDefaultProperties);;
     init = false;
     base[className].extend = this.extend;
     base[className].parseMetadata = this.parseMetadata;
