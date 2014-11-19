@@ -126,6 +126,8 @@ QUnit.test('namespaces & classes', function(assert) {
     assert.equal(Josie.namespace('foo.bar.Test').package, "bar.Test", 'Josie.namespace("foo.bar.Test")');
     assert.equal(Josie.require('foo.bar.Test'), undefined, 'Josie.require("foo.bar.Test")');
     assert.notEqual(Josie.getClass('foo.bar.Test'), undefined, 'Josie.getClass("foo.bar.Test")');
+    assert.equal(Josie.alias('core', 'com.nysoft.josie.core.Control'), com.nysoft.josie.core.Control, 'Josie.alias("core", "com.nysoft.josie.core.Control")');
+    assert.equal(core, com.nysoft.josie.core.Control, "Checking alias: core");
 });
 
 QUnit.test('other stuff', function(assert) {
