@@ -43,7 +43,7 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
 			} catch (err) { //otherwise look for binding selector
 				Josie.log.trace('Parsed as string-value');
                 //check if it is a namespace or object
-				value = Josie.getClass(sValue) || sValue;
+				value = (sValue.indexOf('.') > -1) ? Josie.getClass(sValue) || sValue : sValue;
 			}
 			options[propertyName] = value;
 		});
