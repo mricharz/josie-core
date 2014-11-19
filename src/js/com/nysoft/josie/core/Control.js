@@ -58,7 +58,7 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
 	
 	rerender: function(bWithoutUpdateProperties) {
 		this.trigger('onBeforeRenderer');
-		this.getDom().empty();
+		this.replaceDom('<div />').remove();
 		this._renderControl();
 		if(!bWithoutUpdateProperties)
 			this._forceUpdateProperties();
@@ -80,7 +80,7 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
         var jqOldDom = this.getDom(),
             jqNewDom = jQuery(sContent);
         this.setDom(jqNewDom);
-        jqOldDom.replaceWith(this.getDom());
+        return jqOldDom.replaceWith(this.getDom());
     },
 
     addCssClass: function(sClass) {
