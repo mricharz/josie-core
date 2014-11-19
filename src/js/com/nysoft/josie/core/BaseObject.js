@@ -180,7 +180,8 @@ com.nysoft.josie.core.BaseObject.extend = function (className, classDescObject) 
 
             //prototyping setter (with validation)
             base[className].prototype['set' + name] = function (value) {
-                if (type === null || typeof (value) === type || value === null) {
+                if (type === null || typeof (value) === type || value === null ||
+                    (type === 'string' && !isNaN(value))) {
                     this.setProperty(key, value);
                 } else {
                     throw new com.nysoft.josie.core.Exception('Parameter "'+name+'" must be a type of: ' + type);
