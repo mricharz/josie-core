@@ -249,7 +249,8 @@ Josie.declare = function(namespace, base) {
 
 //check if a class exists
 Josie.classExists = function(className) {
-	return (Josie.getClass(className) !== undefined);
+    var oClass = Josie.getClass(className);
+    return (oClass !== undefined && typeof oClass === 'function');
 };
 
 //get class by name
