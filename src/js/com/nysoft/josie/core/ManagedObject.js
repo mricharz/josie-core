@@ -139,6 +139,6 @@ com.nysoft.josie.core.BaseObject.extend('com.nysoft.josie.core.ManagedObject', {
 	_setReference: function(domObject) {
 		domObject = domObject || this.getDom();
 		domObject.data('control', this);
-	},
+	}
 	
 });

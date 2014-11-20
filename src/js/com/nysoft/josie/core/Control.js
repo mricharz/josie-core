@@ -29,7 +29,7 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
 	meta: {
 		id: 'string',
 		visible: 'boolean',
-        cssClasses: { type: 'object', defaultValue: {} }
+        cssClasses: { type: 'object', defaultValue: [] }
 	},
 	
 	init: function() {},
@@ -42,6 +42,19 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
 			if(this.getVisible() === false) {
 				this.getDom().hide();
 			}
+            //bind global control events
+            this.getDom().click(jQuery.proxy(function(){
+                this.trigger('onClick');
+            }, this));
+            this.getDom().dblclick(jQuery.proxy(function(){
+                this.trigger('onDblClick');
+            }, this));
+            this.getDom().focus(jQuery.proxy(function(){
+                this.trigger('onFocus');
+            }, this));
+            this.getDom().blur(jQuery.proxy(function(){
+                this.trigger('onBlur');
+            }, this));
 		}
 	},
 	
@@ -84,17 +97,21 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
     },
 
     addCssClass: function(sClass) {
-        this.getCssClasses()[sClass] = true;
+        this.getCssClasses().push(sClass);
     },
 
     removeCssClass: function(sClass) {
-        delete this.getCssClasses()[sClass];
+        var aCssClasses = this.getCssClasses(),
+            iIndex = aCssClasses.indexOf(sClass);
+        if(iIndex > -1) {
+            aCssClasses.splice(iIndex, 1);
+        }
     },
 
     writeCssClasses: function() {
-        var aCssClasses = jQuery.map(this.getCssClasses(), function(value, index) { return index; });
-        this.setCssClasses({});  // empty it for next write or writing-step
-        return ' class="'+aCssClasses.join(' ')+'" ';
+        var aCssClasses = this.getCssClasses();
+        this.setCssClasses([]);  // empty it for next write or writing-step
+        return ' class="' + aCssClasses.join(' ') + '" ';
     }
 	
 });
