@@ -30,7 +30,7 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
         id: 'string',
         visible: 'boolean',
         cssClasses: { type: 'object', defaultValue: [] },
-        content: 'object'
+        content: 'com.nysoft.josie.core.Control[]'
     },
 
     init: function() {},
@@ -51,7 +51,6 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
     _renderContent: function() {
         var aObjects = this.getContent();
         if(typeof aObjects == 'object' && aObjects) {
-            var dom = this.getDom();
             if(aObjects.length > 0) {
                 var t = this;
                 Josie.utils.each(aObjects, function(oObject) {

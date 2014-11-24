@@ -127,7 +127,29 @@ Josie.utils = {
 			oResult[iIndex] = fCallback(oIterateable[iIndex], iIndex);
 		}
 		return oResult;
-	}
+	},
+
+    validateType: function(type, value) {
+        var sType = type.toLowerCase(),
+            fTypeClass = Josie.getClass(type);
+
+        //check if type or value are null
+        if(type === null || value === null) {
+            return true;
+        }
+
+        //check if value if typeof (native type validation)
+        if(typeof (value) === sType
+                //special check for numbers to be valid as a string
+            || (sType === 'string' && !isNaN(value))) {
+            return true;
+        }
+
+        if(typeof fTypeClass === 'function' && value instanceof fTypeClass) {
+            return true;
+        }
+        return false;
+    }
 	
 };
 
