@@ -89,6 +89,8 @@ com.nysoft.josie.core.BaseObject.extend('foo.bar.Foobar', {
       function
       object
       null (without ') > no validation
+      complete classnames like: com.nysoft.josie.core.Control
+      and collections with []-suffix like: number[] or com.nysoft.josie.core.Control[]
     and more. see native javascript types as reference
     */
   }
@@ -116,6 +118,17 @@ Josie.require('http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js');
 ```
 
 *A script will only be loaded once! If this is already loaded, _Josie.require_ will skip without an error.*
+
+Alias:
+------
+
+You can create namespace aliases to shorten namespace-names.
+You can use this aliases also in HTML-Decleration.
+```javascript
+Josie.alias('ui', 'com.nysoft.josie.ui');
+
+var text = new ui.Text();
+```
 
 Events:
 -------
