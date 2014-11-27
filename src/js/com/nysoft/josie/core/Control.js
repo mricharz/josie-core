@@ -29,7 +29,8 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
     meta: {
         id: 'string',
         visible: 'boolean',
-        cssClasses: { type: 'object', defaultValue: [] },
+        cssClasses: { type: 'string[]', defaultValue: [] },
+        cssStyles: { type: 'object', defaultValue: {} },
         content: 'com.nysoft.josie.core.Control[]'
     },
 
@@ -120,7 +121,29 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
     writeCssClasses: function() {
         var aCssClasses = this.getCssClasses();
         this.setCssClasses([]);  // empty it for next write or writing-step
-        return ' class="' + aCssClasses.join(' ') + '" ';
+        if(aCssClasses.length) {
+            return ' class="' + aCssClasses.join(' ') + '" ';
+        }
+        return ' ';
+    },
+
+    addCssStyle: function(sStyle, sValue) {
+        this.getCssStyles()[sStyle] = sValue;
+    },
+
+    removeCssStyle: function(sStyle) {
+        delete this.getCssStyles()[sStyle];
+    },
+
+    writeCssStyles: function() {
+        var aCssStyles = jQuery.map(this.getCssStyles(), function(value, index) {
+            return index + '=' + value;
+        });
+        this.setCssStyles({});  // empty it for next write or writing-step
+        if(aCssStyles.length) {
+            return ' style="' + aCssStyles.join(';') + '" ';
+        }
+        return ' ';
     }
 
 });

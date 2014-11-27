@@ -62,7 +62,7 @@ com.nysoft.josie.core.BaseObject.extend = function (className, classDescObject) 
 
     //Declare class
     base[className] = jQuery.extend(function () {
-        this.aProperties = jQuery.extend({}, this.aDefaultProperties);
+        this.aProperties = jQuery.extend(true, {}, this.aDefaultProperties);
 
         this.setProperty = function (key, value) {
             this.aProperties[key] = value;
@@ -161,7 +161,7 @@ com.nysoft.josie.core.BaseObject.extend = function (className, classDescObject) 
     if(!base[className].prototype.aDefaultProperties) {
         base[className].prototype.aDefaultProperties = {};
     }
-    base[className].prototype.aDefaultProperties = jQuery.extend({}, base[className].prototype.aDefaultProperties, this.aDefaultProperties);
+    base[className].prototype.aDefaultProperties = jQuery.extend(true, {}, base[className].prototype.aDefaultProperties);
     init = false;
     base[className].extend = this.extend;
     base[className].parseMetadata = this.parseMetadata;
