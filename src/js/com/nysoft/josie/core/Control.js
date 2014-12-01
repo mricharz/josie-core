@@ -137,7 +137,7 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
 
     writeCssStyles: function() {
         var aCssStyles = jQuery.map(this.getCssStyles(), function(value, index) {
-            return index + '=' + value;
+            return index + ':' + value;
         });
         this.setCssStyles({});  // empty it for next write or writing-step
         if(aCssStyles.length) {
