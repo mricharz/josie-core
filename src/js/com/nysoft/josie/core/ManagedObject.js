@@ -14,9 +14,10 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
             if(sPropertyName === "class") { // skip class-property
                 return true;
             }
-            var propertyName = Josie.utils.toCamelCase(sPropertyName);
+            var propertyName = Josie.utils.toCamelCase(sPropertyName),
+                bEvent = (sPropertyName.match(/^on[A-Z0-9]/) !== null);
             Josie.log.trace('Get PropertyValue of: '
-            + propertyName, sValue);
+            + propertyName, sValue, bEvent);
             var value;
             //check for shot-hand selector
             if(sValue && sValue.match) {
@@ -25,6 +26,11 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
                     //enrich short-hand selector
                     sValue = '{"selector":'+aMatches[1]+'}';
                 }
+            }
+            if(bEvent) {
+                var fnEvent = Function(sValue);
+                oControlObject.bindEvent(propertyName, jQuery.proxy(fnEvent, oControlObject));
+                return;
             }
             try { //try to parse as JSON-Data and set as property-value
                 value = sValue;
