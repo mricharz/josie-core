@@ -81,16 +81,6 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
     oControlObject.setProperties(options);
 });
 
-//onAfterInit
-com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.Control', 'onAfterInit', function(e) {
-    var oControlObject = e[0], arguments = e[1], domObject, options;
-    domObject = arguments[0] || null;
-    options = arguments[1] || null;
-
-    //make dom-reference
-    oControlObject._setReference();
-});
-
 com.nysoft.josie.core.BaseObject.extend('com.nysoft.josie.core.ManagedObject', {
     meta: {
         dom: 'object',
@@ -135,11 +125,6 @@ com.nysoft.josie.core.BaseObject.extend('com.nysoft.josie.core.ManagedObject', {
 
     getBinding: function(sPropertyName) {
         return this.getBindings()[sPropertyName];
-    },
-
-    _setReference: function(domObject) {
-        domObject = domObject || this.getDom();
-        domObject.data('control', this);
-    },
+    }
 
 });

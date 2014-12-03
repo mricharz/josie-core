@@ -1,5 +1,8 @@
 Josie.require('com.nysoft.josie.core.ManagedObject');
 
+Josie.declare('com.nysoft.josie.core.Control');
+com.nysoft.josie.core.Control._controls = {};
+
 //onBeforeInit
 com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.Control', 'onBeforeInit', function(e) {
     var oControlObject = e[0];
@@ -20,8 +23,8 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.Control', 'onAfterI
 
     //update all properties to force rendering
     oControlObject._forceUpdateProperties();
+    oControlObject._setReference();
     oControlObject.trigger('onAfterRenderer');
-
 });
 
 com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
@@ -64,8 +67,10 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
     },
 
     _renderContentItem: function(oItem) {
-        this.getDom().append(oItem.getDom());
-        oItem.invalidate();
+        if(oItem instanceof com.nysoft.josie.core.Control) {
+            this.getDom().append(oItem.getDom());
+            oItem.invalidate();
+        }
     },
 
     _forceUpdateProperties: function() {
@@ -144,6 +149,10 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
             return ' style="' + aCssStyles.join(';') + '" ';
         }
         return ' ';
+    },
+
+    _setReference: function(domObject) {
+        com.nysoft.josie.core.Control._controls[this.getId()] = this;
     }
 
 });
