@@ -173,6 +173,14 @@ com.nysoft.josie.core.BaseObject.extend = function (className, classDescObject) 
                 defaultValue = type.defaultValue;
                 type = type.type;
             }
+            var sType = type,
+                bArray = false;
+            if(sType && typeof sType === 'string') {
+                if (sType.indexOf('[]') === sType.length - 2) {
+                    bArray = true;
+                    sType = sType.replace(/\[\]$/, '');
+                }
+            }
             var name = Josie.utils.capitalize(key);
 
             //set defaultValue
@@ -180,13 +188,6 @@ com.nysoft.josie.core.BaseObject.extend = function (className, classDescObject) 
 
             //prototyping setter (with validation)
             base[className].prototype['set' + name] = function (value) {
-                var bArray = false
-                sType = type;
-                if(sType.indexOf('[]') === sType.length-2) {
-                    bArray = true;
-                    sType = sType.replace(/\[\]$/,'');
-                }
-
                 if(Josie.utils.validateType(sType, value)) {
                     this.setProperty(key, value);
                     return;
@@ -214,6 +215,34 @@ com.nysoft.josie.core.BaseObject.extend = function (className, classDescObject) 
             base[className].prototype['get' + name] = function () {
                 return this.getProperty(key);
             };
+
+            //add methods to work with arrays
+            if(bArray) {
+                base[className].prototype['add' + name] = function (value) {
+                    var aProp = this.getProperty(key);
+                    if(!(aProp instanceof Array)) {
+                        aProp = [];
+                    }
+                    if(!(value instanceof Array)) {
+                        value = [value];
+                    }
+                    var lastIndex = 0;
+                    Josie.utils.each(value, function(oObject) {
+                        if(Josie.utils.validateType(sType, oObject)) {
+                            lastIndex = aProp.push(oObject);
+                        }
+                    });
+                    this.setProperty(key, aProp);
+                    return lastIndex - 1;
+                };
+
+                base[className].prototype['remove' + name] = function (index) {
+                    var aProp = this.getProperty(key);
+                    if(aProp instanceof Array) {
+                        return aProp.slice(index, 1);
+                    }
+                }
+            }
         });
     };
 

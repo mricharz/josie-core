@@ -52,7 +52,12 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
                 //check if it is a namespace
                 value = (sValue && sValue.indexOf('.') > -1) ? Josie.getClass(sValue) || sValue : sValue;
             }
-            options[propertyName] = value;
+            var fnSetter = oControlObject['set'+Josie.utils.capitalize(propertyName)];
+            if(fnSetter) {
+                fnSetter.call(oControlObject, value);
+            } else {
+                oControlObject.setProperty(propertyName, value);
+            }
         });
         //aggregate content
         var jqAggregations = domObject.children('*[data-property]');
@@ -60,19 +65,21 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
         jqAggregations.each(function(){
             var jqThis = jQuery(this);
             var sAggregation = jqThis.data('property');
-            //create aggregation array
-            if(!oAggregations[sAggregation]) {
-                oAggregations[sAggregation] = [];
-            }
+            var fnAdder = oControlObject['add'+Josie.utils.capitalize(sAggregation)];
             //is this a object, then generate it
             if(jqThis.data('data-class')) {
                 var oObject = jqThis.generateObject();
-                oAggregations[sAggregation].push(oObject);
+                if(fnAdder) {
+                    fnAdder.call(oControlObject, oObject);
+                }
             } else { //id this only a container, then generate its content
-                oAggregations[sAggregation] = oAggregations[sAggregation].concat(jqThis.children().generateObject());
+                jqThis.children().each(function(){
+                    if(fnAdder) {
+                        fnAdder.call(oControlObject, jQuery(this).generateObject());
+                    }
+                });
             }
         });
-        options = jQuery.extend(options, oAggregations);
         //aggregate to default "content" for content without aggregation
         var aContentObjects = domObject.children(':not([data-property])[data-class]').generateObject();
         if(aContentObjects.length) {
