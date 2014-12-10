@@ -66,6 +66,10 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
             var jqThis = jQuery(this);
             var sAggregation = jqThis.data('property');
             var fnAdder = oControlObject['add'+Josie.utils.capitalize(sAggregation)];
+            if(!fnAdder) {
+                //if there is no add*-Method, this is not an Array-Property only the last item will be left in this Property
+                fnAdder = oControlObject['set'+Josie.utils.capitalize(sAggregation)];
+            }
             //is this a object, then generate it
             if(jqThis.data('data-class')) {
                 var oObject = jqThis.generateObject();
