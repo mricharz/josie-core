@@ -4,9 +4,9 @@ Josie.require('com.nysoft.josie.core.BaseObject');
 com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'onBeforeInit', function(e, data) {
     var oControlObject = e[0], arguments = e[1], domObject, options;
     domObject = arguments[0] || null;
-    options = arguments[1] || null;
+    options = arguments[1] || arguments[0] || null;
 
-    if (domObject) {
+    if (domObject && Josie.utils.isjQuery(domObject)) {
         oControlObject.setDom(domObject);
         // capture object properties
         var properties = domObject.data();
@@ -55,8 +55,9 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
             var fnSetter = oControlObject['set'+Josie.utils.capitalize(propertyName)];
             if(fnSetter) {
                 fnSetter.call(oControlObject, value);
+                delete options[propertyName];
             } else {
-                oControlObject.setProperty(propertyName, value);
+                options[propertyName] = value;
             }
         });
         //aggregate content
@@ -70,6 +71,7 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
                 //if there is no add*-Method, this is not an Array-Property only the last item will be left in this Property
                 fnAdder = oControlObject['set'+Josie.utils.capitalize(sAggregation)];
             }
+            delete options[sAggregation];
             //is this a object, then generate it
             if(jqThis.data('data-class')) {
                 var oObject = jqThis.generateObject();
@@ -79,7 +81,10 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
             } else { //id this only a container, then generate its content
                 jqThis.children().each(function(){
                     if(fnAdder) {
-                        fnAdder.call(oControlObject, jQuery(this).generateObject());
+                        var aObjects = jQuery(this).generateObject();
+                        if(aObjects.length) {
+                            fnAdder.call(oControlObject, aObjects[0]);
+                        }
                     }
                 });
             }

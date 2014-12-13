@@ -31,7 +31,7 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
 
     meta: {
         id: 'string',
-        visible: 'boolean',
+        visible: { type: 'boolean', defaultValue: true },
         cssClasses: { type: 'string[]', defaultValue: [] },
         cssStyles: { type: 'object', defaultValue: {} },
         content: 'com.nysoft.josie.core.Control[]'
