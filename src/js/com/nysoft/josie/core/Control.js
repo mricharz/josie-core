@@ -19,11 +19,11 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.Control', 'onAfterI
 
     //render control
     oControlObject.trigger('onBeforeRenderer');
+    oControlObject._setReference();
     oControlObject._renderControl();
 
     //update all properties to force rendering
     oControlObject._forceUpdateProperties();
-    oControlObject._setReference();
     oControlObject.trigger('onAfterRenderer');
 });
 
@@ -104,6 +104,11 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
         }
     },
 
+    destroy: function() {
+        this.getDom().remove();
+        this._removeReference();
+    },
+
     replaceDom: function(sContent) {
         var jqOldDom = this.getDom(),
             jqNewDom = jQuery(sContent);
@@ -151,8 +156,11 @@ com.nysoft.josie.core.ManagedObject.extend('com.nysoft.josie.core.Control', {
         return ' ';
     },
 
-    _setReference: function(domObject) {
+    _setReference: function() {
         com.nysoft.josie.core.Control._controls[this.getId()] = this;
-    }
+    },
 
+    _removeReference: function() {
+        delete com.nysoft.josie.core.Control._controls[this.getId()];
+    }
 });

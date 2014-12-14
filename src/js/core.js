@@ -439,13 +439,13 @@ Josie.byId = function(sId) {
 //requestAnimationFrame-wrapper for different browsers
 Josie.requestAnimationFrame = (function() {
     return window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame    ||
-    window.oRequestAnimationFrame      ||
-    window.msRequestAnimationFrame     ||
-    function(fCallback){
-        window.setTimeout(fCallback, 1000 / 60);
-    };
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame    ||
+        window.oRequestAnimationFrame      ||
+        window.msRequestAnimationFrame     ||
+        function(fCallback){
+            window.setTimeout(fCallback, 1000 / 60);
+        };
 })();
 
 //Device detection
