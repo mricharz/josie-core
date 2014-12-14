@@ -437,7 +437,7 @@ Josie.byId = function(sId) {
 };
 
 //requestAnimationFrame-wrapper for different browsers
-Josie.requestAnimationFrame = (function() {
+window.requestAnimFrame = (function() {
     return window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
         window.mozRequestAnimationFrame    ||
