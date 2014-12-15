@@ -84,9 +84,11 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
                 }
             } else { //id this only a container, then generate its content
                 jqThis.children().each(function(){
-                    var aObjects = jQuery(this).generateObject();
-                    if(fnAdder && aObjects && aObjects.length) {
-                        fnAdder.call(oControlObject, aObjects[0]);
+                    if(fnAdder) {
+                        var aObjects = jQuery(this).generateObject();
+                        if(aObjects && aObjects.length) {
+                            fnAdder.call(oControlObject, aObjects[0]);
+                        }
                     }
                 });
             }
