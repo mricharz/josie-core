@@ -4,9 +4,9 @@ Josie.require('com.nysoft.josie.core.BaseObject');
 com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'onBeforeInit', function(e, data) {
     var oControlObject = e[0], arguments = e[1], domObject, options;
     domObject = arguments[0] || null;
-    options = arguments[1] || null;
+    options = arguments[1] || arguments[0] || null;
 
-    if (domObject) {
+    if (domObject && Josie.utils.isjQuery(domObject)) {
         oControlObject.setDom(domObject);
         // capture object properties
         var properties = domObject.data();
@@ -32,31 +32,36 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
                 oControlObject.bindEvent(propertyName, jQuery.proxy(fnEvent, oControlObject));
                 return;
             }
-            try { //try to parse as JSON-Data and set as property-value
+            try { //try to parse as JSON-Data
+                value = jQuery.parseJSON(sValue);
+            } catch(err) {
                 value = sValue;
-                if(typeof value !== 'object') {
-                    value = jQuery.parseJSON(sValue);
+            }
+
+            if(typeof value === 'object') { //look for binding selector
+                Josie.log.trace('Parsed as JSON');
+                //check for selector
+                if (value.selector && Josie.utils.isSelector(value.selector)) {
+                    Josie.log.trace('has selector binding');
+                    oControlObject.addBinding(propertyName, value.selector);
+                    return true;
                 }
-                if(typeof value === 'object') {
-                    Josie.log.trace('Parsed as JSON');
-                    //check for selector
-                    if (value.selector && Josie.utils.isSelector(value.selector)) {
-                        Josie.log.trace('has selector binding');
-                        oControlObject.addBinding(propertyName, value.selector);
-                        delete options[propertyName];
-                        return true;
-                    }
+            } else if(typeof value === 'string') {
+                Josie.log.trace('Parsed as string-value', value, Josie.getClass(value));
+                //check if it is a namespace and get the object
+                if(Josie.utils.isNamespace(value) && value.indexOf('.') > 0) {
+                    try {
+                        Josie.require(value.replace(/\.[^\.]*?$/, ''));
+                        value = Josie.getClass(value);
+                    } catch(err) {}
                 }
-            } catch (err) { //otherwise look for binding selector
-                Josie.log.trace('Parsed as string-value');
-                //check if it is a namespace
-                value = (sValue && sValue.indexOf('.') > -1) ? Josie.getClass(sValue) || sValue : sValue;
             }
             var fnSetter = oControlObject['set'+Josie.utils.capitalize(propertyName)];
             if(fnSetter) {
                 fnSetter.call(oControlObject, value);
+                delete options[propertyName];
             } else {
-                oControlObject.setProperty(propertyName, value);
+                options[propertyName] = value;
             }
         });
         //aggregate content
@@ -65,6 +70,7 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
         jqAggregations.each(function(){
             var jqThis = jQuery(this);
             var sAggregation = jqThis.data('property');
+            delete options[sAggregation];
             var fnAdder = oControlObject['add'+Josie.utils.capitalize(sAggregation)];
             if(!fnAdder) {
                 //if there is no add*-Method, this is not an Array-Property only the last item will be left in this Property
@@ -72,14 +78,15 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
             }
             //is this a object, then generate it
             if(jqThis.data('data-class')) {
-                var oObject = jqThis.generateObject();
-                if(fnAdder) {
-                    fnAdder.call(oControlObject, oObject);
+                var aObjects = jqThis.generateObject();
+                if(fnAdder && aObjects && aObjects.length) {
+                    fnAdder.call(oControlObject, aObjects[0]);
                 }
             } else { //id this only a container, then generate its content
                 jqThis.children().each(function(){
-                    if(fnAdder) {
-                        fnAdder.call(oControlObject, jQuery(this).generateObject());
+                    var aObjects = jQuery(this).generateObject();
+                    if(fnAdder && aObjects && aObjects.length) {
+                        fnAdder.call(oControlObject, aObjects[0]);
                     }
                 });
             }

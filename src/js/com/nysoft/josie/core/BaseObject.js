@@ -208,7 +208,7 @@ com.nysoft.josie.core.BaseObject.extend = function (className, classDescObject) 
                     }
                 }
 
-                throw new com.nysoft.josie.core.Exception('Parameter "'+this.className+'::'+name+'" must be a type of: ' + type);
+                throw new com.nysoft.josie.core.Exception('Property "'+this.className+'::'+name+'" must be a type of: ' + type);
             };
 
             //prototyping getter
@@ -230,6 +230,8 @@ com.nysoft.josie.core.BaseObject.extend = function (className, classDescObject) 
                     Josie.utils.each(value, function(oObject) {
                         if(Josie.utils.validateType(sType, oObject)) {
                             lastIndex = aProp.push(oObject);
+                        } else {
+                            throw new com.nysoft.josie.core.Exception('Property "'+name+'" must be a type of: ' + type);
                         }
                     });
                     this.setProperty(key, aProp);

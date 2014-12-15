@@ -85,7 +85,7 @@ Josie.utils = {
 
     isNamespace: function(sNamespace) {
         var pattern = new RegExp('^([a-zA-Z0-9_-]*\\.?)*$', 'i');
-        if(pattern.test(sNamespace) && typeof sNamespace === 'string' && sNamespace != '') {
+        if(typeof sNamespace === 'string' && sNamespace != '' && pattern.test(sNamespace)) {
             return true;
         }
         return false;
