@@ -45,6 +45,89 @@ Josie.require('com.nysoft.josie.core.EventStack');
 
 com.nysoft.josie.core.BaseObject = function() {};
 
+com.nysoft.josie.core.BaseObject.prototype.setProperty = function (key, value) {
+    this.aProperties[key] = value;
+};
+
+com.nysoft.josie.core.BaseObject.prototype.setProperties = function(properties) {
+    if(Array.isArray(properties) || jQuery.isPlainObject(properties)) {
+        jQuery.each(properties, jQuery.proxy(function(key, value) {
+            this.setProperty(key, value);
+        }, this));
+    }
+};
+
+com.nysoft.josie.core.BaseObject.prototype.getProperty = function (key) {
+    return this.aProperties[key];
+};
+
+com.nysoft.josie.core.BaseObject.prototype.getProperties = function() {
+    return this.aProperties;
+};
+
+com.nysoft.josie.core.BaseObject.prototype._super = function() {
+    if(arguments.length) {
+        var args = [];
+        Array.prototype.push.apply(args, arguments);
+        var methodName = args.shift();
+        //generate parent-stack if not exists
+        if(!this.__$translateParent) {
+            this.__$translateParent = [];
+        }
+        //find method in parent
+        function lookBackStack(method, arr, index) {
+            if(index === undefined) {
+                index = arr.length-1;
+            }
+            if(index < 0) {
+                return;
+            }
+            if(arr[index][method]) {
+                return arr[index][method];
+            }
+            return lookBackStack(method, arr, index-1);
+        }
+        //search in old parent-object for this method and use this instead
+        var method = lookBackStack(methodName, this.__$translateParent) || this.$parent[methodName];
+        if(typeof method == 'function') {
+            //push current parent into parent-stack
+            this.__$translateParent.push(this.$parent);
+            //only translate parent if there is another parent
+            if(this.$parent.$parent) {
+                this.$parent = this.$parent.$parent;
+            }
+            //call super-method
+            var result = method.apply(this, args);
+            //revert parent to it's initial state
+            this.$parent = this.__$translateParent.pop();
+            return result;
+        } else {
+            throw new com.nysoft.josie.core.Exception(methodName+' is not a function!');
+        }
+    } else {
+        throw new com.nysoft.josie.core.Exception('No methodName specified to call!');
+    }
+};
+
+com.nysoft.josie.core.BaseObject.prototype.bindEvent = function(sEventName, fEventHandlerFunction, oData) {
+    com.nysoft.josie.core.EventStack.bind(this ,sEventName, fEventHandlerFunction, this, oData);
+};
+
+com.nysoft.josie.core.BaseObject.prototype.unbindEvent = function(sEventName) {
+    com.nysoft.josie.core.EventStack.unbind(this, sEventName);
+};
+
+com.nysoft.josie.core.BaseObject.prototype.trigger = function() {
+    var args = [];
+    Array.prototype.push.apply(args, arguments);
+    args.unshift(this);
+    com.nysoft.josie.core.EventStack.trigger.apply(com.nysoft.josie.core.EventStack, args);
+};
+
+com.nysoft.josie.core.BaseObject.prototype.getEventStack = function() {
+    return com.nysoft.josie.core.EventStack;
+};
+
 com.nysoft.josie.core.BaseObject.extend = function (className, classDescObject) {
     //Validate Parameter
     if (!className) {
@@ -61,108 +144,25 @@ com.nysoft.josie.core.BaseObject.extend = function (className, classDescObject) 
     var base = Josie.declare(nameSpace);
 
     //Declare class
-    base[className] = jQuery.extend(function () {
+    base[className] = jQuery.extend(function() {
         this.aProperties = jQuery.extend(true, {}, this.aDefaultProperties);
 
-        this.setProperty = function (key, value) {
-            this.aProperties[key] = value;
-        };
-
-        this.setProperties = function(properties) {
-            if(Array.isArray(properties) || jQuery.isPlainObject(properties)) {
-                jQuery.each(properties, jQuery.proxy(function(key, value) {
-                    this.setProperty(key, value);
-                }, this));
-            }
-        };
-
-        this.getProperty = function (key) {
-            return this.aProperties[key];
-        };
-
-        this.getProperties = function() {
-            return this.aProperties;
-        };
-
-        this._super = function() {
-            if(arguments.length) {
-                var args = [];
-                Array.prototype.push.apply(args, arguments);
-                var methodName = args.shift();
-                //generate parent-stack if not exists
-                if(!this.__$translateParent) {
-                    this.__$translateParent = [];
-                }
-                //find method in parent
-                function lookBackStack(method, arr, index) {
-                    if(index === undefined) {
-                        index = arr.length-1;
-                    }
-                    if(index < 0) {
-                        return;
-                    }
-                    if(arr[index][method]) {
-                        return arr[index][method];
-                    }
-                    return lookBackStack(method, arr, index-1);
-                }
-                //search in old parent-object for this method and use this instead
-                var method = lookBackStack(methodName, this.__$translateParent) || this.$parent[methodName];
-                if(typeof method == 'function') {
-                    //push current parent into parent-stack
-                    this.__$translateParent.push(this.$parent);
-                    //only translate parent if there is another parent
-                    if(this.$parent.$parent) {
-                        this.$parent = this.$parent.$parent;
-                    }
-                    //call super-method
-                    var result = method.apply(this, args);
-                    //revert parent to it's initial state
-                    this.$parent = this.__$translateParent.pop();
-                    return result;
-                } else {
-                    throw new com.nysoft.josie.core.Exception(methodName+' is not a function!');
-                }
-            } else {
-                throw new com.nysoft.josie.core.Exception('No methodName specified to call!');
-            }
-        };
-
-        this.bindEvent = function(sEventName, fEventHandlerFunction, oData) {
-            com.nysoft.josie.core.EventStack.bind(this ,sEventName, fEventHandlerFunction, this, oData);
-        };
-
-        this.unbindEvent = function(sEventName) {
-            com.nysoft.josie.core.EventStack.unbind(this, sEventName);
-        };
-
-        this.trigger = function() {
-            var args = [];
-            Array.prototype.push.apply(args, arguments);
-            args.unshift(this);
-            com.nysoft.josie.core.EventStack.trigger.apply(com.nysoft.josie.core.EventStack, args);
-        };
-
-        this.getEventStack = function() {
-            return com.nysoft.josie.core.EventStack;
-        };
-
-        this.trigger('onBeforeInit', this, arguments);
         if(!init && this.init) {
+            this.trigger('onBeforeInit', this, arguments);
             this.init.apply(this, arguments);
+            this.trigger('onAfterInit', this, arguments);
         }
-        this.trigger('onAfterInit', this, arguments);
     }, base[className]);
     //abstract this
     init = true;
     base[className].prototype = new this();
     base[className].prototype.$parent = new this();
+    init = false;
     base[className].prototype.className = nameSpace+'.'+className;
     if(!base[className].prototype.aDefaultProperties) {
         base[className].prototype.aDefaultProperties = {};
     }
     base[className].prototype.aDefaultProperties = jQuery.extend(true, {}, base[className].prototype.aDefaultProperties);
-    init = false;
     base[className].extend = this.extend;
     base[className].parseMetadata = this.parseMetadata;
 

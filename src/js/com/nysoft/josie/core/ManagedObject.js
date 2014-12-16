@@ -51,8 +51,11 @@ com.nysoft.josie.core.EventStack.bind('com.nysoft.josie.core.ManagedObject', 'on
                 //check if it is a namespace and get the object
                 if(Josie.utils.isNamespace(value) && value.indexOf('.') > 0) {
                     try {
-                        Josie.require(value.replace(/\.[^\.]*?$/, ''));
                         value = Josie.getClass(value);
+                        if(!value) {
+                            Josie.require(value.replace(/\.[^\.]*?$/, ''));
+                            value = Josie.getClass(value);
+                        }
                     } catch(err) {}
                 }
             }
@@ -121,7 +124,10 @@ com.nysoft.josie.core.BaseObject.extend('com.nysoft.josie.core.ManagedObject', {
     },
 
     destroy: function() {
-        this.getDom().remove();
+        var jqDom = this.getDom();
+        if(jqDom && jqDom.length) {
+            this.getDom().remove();
+        }
     },
 
     attachTo: function(domObject, prepend) {

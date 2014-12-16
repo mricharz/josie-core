@@ -131,12 +131,12 @@ QUnit.test('namespaces & classes', function(assert) {
 });
 
 QUnit.test('other stuff', function(assert) {
-	assert.equal(typeof Josie.requestAnimationFrame, 'function', 'typeof Josie.requestAnimationFrame == "function"');
-	assert.equal(typeof Josie.userAgent, 'string', 'typeof Josie.userAgent == "string"');
+	assert.equal(typeof window.requestAnimFrame, 'function', 'typeof window.requestAnimaFrame === "function"');
+	assert.equal(typeof Josie.userAgent, 'string', 'typeof Josie.userAgent === "string"');
 	assert.notEqual(Josie.device, null, 'Josie.device != null');
 	assert.notEqual(Josie.device.mode, null, 'Josie.device.mode != null');
-	assert.equal(typeof Josie.basePath, 'string', 'typeof Josie.basePath == "string"');
-	assert.equal(typeof Josie.localRun, 'boolean', 'typeof Josie.localRun == "string"');
-	assert.equal(typeof Josie.environment, 'string', 'typeof Josie.environment == "string"');
+	assert.equal(typeof Josie.basePath, 'string', 'typeof Josie.basePath === "string"');
+	assert.equal(typeof Josie.localRun, 'boolean', 'typeof Josie.localRun === "string"');
+	assert.equal(typeof Josie.environment, 'string', 'typeof Josie.environment === "string"');
 	assert.ok(Josie.environment == 'server' || Josie.environment == 'browser', 'Josie.environment == "server" || Josie.environment == "browser"');
 });

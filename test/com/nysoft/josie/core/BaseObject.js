@@ -31,7 +31,7 @@ QUnit.test('require, create, use', function(assert) {
             testNumberArrayValWithDefault: { type: 'number[]', defaultValue: [1, 2] },
             testBaseObjectArrayValWithDefault: { type: 'com.nysoft.josie.core.BaseObject[]', defaultValue: [new com.nysoft.josie.core.BaseObject()] }
 		},
-		
+
 		init: function(options) {
 			this.setProperties(options);
 		}
@@ -40,6 +40,8 @@ QUnit.test('require, create, use', function(assert) {
 	assert.notEqual(com.nysoft.josie.core.BaseObjectExtendMetadataTest, undefined, 'com.nysoft.josie.core.BaseObjectExtendMetadataTest !== undefined');
 	// BaseObjectExtendMetadataTest can be created
 	assert.equal(typeof new com.nysoft.josie.core.BaseObjectExtendMetadataTest(), 'object', 'typeof new com.nysoft.josie.core.BaseObjectExtendMetadataTest() === "object"');
+    var oBaseObjectExtendMetadataTest = new com.nysoft.josie.core.BaseObjectExtendMetadataTest();
+    assert.ok(oBaseObjectExtendMetadataTest instanceof com.nysoft.josie.core.BaseObjectExtendMetadataTest, 'new com.nysoft.josie.core.BaseObjectExtendMetadataTest() instanceof com.nysoft.josie.core.BaseObjectExtendMetadataTest');
 	
 	var oBaseObjectExtendMetadataTest_Filled = new com.nysoft.josie.core.BaseObjectExtendMetadataTest({
 		testVal: 'something',
